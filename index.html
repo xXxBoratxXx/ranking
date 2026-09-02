@@ -339,7 +339,7 @@ function score(it){
   const m = Math.pow(it.moc/40, 1);
   const c = Math.pow(Math.max(it.cena,1)/100, 1);
   const k = Math.pow(kac/5, 1);
-  return (s*m)/(c*k)*100;
+  return (s*m)/(c)*100;
 }
 
 async function loadData(){
