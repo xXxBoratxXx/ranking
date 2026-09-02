@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking Trunk&oacute;w - Forum Konesera</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:#C9D9EC url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%23C9D9EC"/><path d="M0 4L4 0" stroke="%23BAD0EA" stroke-width="1"/></svg>');
+    font-family: Verdana, Tahoma, Geneva, sans-serif;
+    font-size:12px;
+    color:#1B2A3C;
+  }
+  a{ color:#2B5D9E; }
+  a:hover{ color:#C1440E; }
+  .wrap{ max-width: 880px; margin: 0 auto; padding: 14px 10px 40px; }
+
+  .banner{
+    background: linear-gradient(180deg,#7FA3D6 0%,#3F6CA8 45%,#2C4F80 100%);
+    border:1px solid #17385E;
+    border-radius:4px 4px 0 0;
+    padding:14px 18px;
+    text-align:center;
+  }
+  .banner h1{
+    margin:0; font-family: "Trebuchet MS", Verdana, sans-serif;
+    font-size:26px; color:#FFFFFF; letter-spacing:0.5px;
+    text-shadow: 1px 1px 0 #16324F, 0 0 8px rgba(0,0,0,0.3);
+  }
+  .banner p{ margin:4px 0 0; color:#DCE9F8; font-size:11px; font-style:italic; }
+
+  .navbar{
+    background: linear-gradient(180deg,#E8F0FA,#C6D8EE);
+    border:1px solid #7FA3D6; border-top:none;
+    padding:5px 12px; font-size:11px; color:#3A5A80;
+  }
+  .navbar b{ color:#17385E; }
+
+  .box{
+    background:#FFFFFF;
+    border:1px solid #7FA3D6;
+    margin-top:12px;
+  }
+  .box-head{
+    background: linear-gradient(180deg,#D8E6F7,#AFC9E9);
+    border-bottom:1px solid #7FA3D6;
+    padding:5px 10px;
+    font-weight:bold;
+    color:#17385E;
+    font-size:12px;
+  }
+  .box-body{ padding:12px; }
+
+  fieldset{ border:1px solid #B7CBE6; padding:10px; margin:0 0 10px; }
+  legend{ font-size:11px; font-weight:bold; color:#3A5A80; padding:0 4px; }
+
+  table.form-table{ width:100%; border-collapse:collapse; }
+  table.form-table td{ padding:4px 6px; vertical-align:middle; }
+  table.form-table td.lbl{ width:130px; color:#1B2A3C; font-size:11px; }
+
+  input[type=text], input[type=number], select{
+    font-family: Verdana, Tahoma, sans-serif;
+    font-size:11px;
+    padding:3px 4px;
+    border:1px solid #8FA9C7;
+    background:#FFFFFF;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.15);
+    width:100%;
+  }
+  input[type=range]{ width:100%; }
+
+  .btn{
+    font-family: Verdana, Tahoma, sans-serif;
+    font-size:11px;
+    font-weight:bold;
+    color:#17385E;
+    background: linear-gradient(180deg,#F3F8FE,#C9DCF2);
+    border:1px solid #7FA3D6;
+    border-radius:3px;
+    padding:5px 14px;
+    cursor:pointer;
+  }
+  .btn:hover{ background: linear-gradient(180deg,#FFFFFF,#D9E8F8); }
+  .btn:active{ background: linear-gradient(180deg,#C9DCF2,#F3F8FE); }
+  .btn-small{ font-size:10px; padding:2px 8px; }
+
+  .err{ color:#B02E0C; font-size:11px; font-weight:bold; margin-top:6px; display:none; background:#FBEAE5; border:1px solid #E3A98F; padding:4px 8px; }
+
+  .nickbar{
+    background:#FFF6D9; border:1px solid #E0C56B; padding:6px 10px; margin-top:12px;
+    font-size:11px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .nickbar input[type=text]{ width:180px; display:inline-block; }
+
+  .filters{ display:flex; gap:14px; flex-wrap:wrap; padding:8px 12px; background:#EEF4FC; border-bottom:1px solid #B7CBE6; font-size:11px; }
+  .filters label{ display:block; color:#3A5A80; margin-bottom:2px; }
+  .filters select{ width:170px; }
+
+  table.thread{ width:100%; border-collapse:collapse; }
+  table.thread td{ border-bottom:1px solid #D3E1F2; padding:8px 8px; vertical-align:top; font-size:11px; }
+  table.thread tr:nth-child(odd) td{ background:#F5F9FE; }
+  table.thread tr:nth-child(even) td{ background:#FFFFFF; }
+  table.thread tr:hover td{ background:#FFF3D6; }
+
+  .avatar-cell{ width:96px; text-align:center; }
+  .avatar-box{
+    width:80px; height:80px; margin:0 auto 4px;
+    border:1px solid #8FA9C7; background:#EAF1FB;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .avatar-box img{ width:100%; height:100%; object-fit:cover; }
+  .avatar-fallback{ font-size:9px; color:#7C93AE; text-align:center; }
+  .nick{ font-weight:bold; color:#17385E; font-size:11px; word-break:break-word; }
+  .rank-badge{
+    display:inline-block; background:#2C4F80; color:#fff; font-size:9px; font-weight:bold;
+    padding:1px 5px; border-radius:2px; margin-top:3px;
+  }
+
+  .title-line{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .item-name{ font-weight:bold; font-size:13px; color:#17385E; }
+  .item-name .rodzaj{ font-weight:normal; color:#5A7EA0; }
+  .wsk{ font-weight:bold; color:#B02E0C; font-size:13px; }
+  .meta{ color:#4B6483; margin-top:2px; }
+  .quote{
+    background:#EFF5FC; border:1px solid #D3E1F2; border-left:3px solid #7FA3D6;
+    padding:3px 6px; margin-top:4px; font-size:10px; color:#3A5A80;
+  }
+
+  .stat-mini{ display:inline-block; margin-right:10px; }
+  .stat-mini b{ color:#17385E; }
+
+  .vote-box{
+    margin-top:6px; padding:6px; background:#F7FAFF; border:1px dashed #B7CBE6;
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:10px;
+  }
+  .vote-box .fld{ display:flex; align-items:center; gap:4px; }
+  .vote-box input[type=number]{ width:55px; }
+
+  .comments{ margin-top:8px; }
+  .comment{
+    background:#F5F9FE; border:1px solid #D3E1F2; border-left:3px solid #AFC9E9;
+    padding:4px 8px; margin-top:5px; font-size:11px;
+  }
+  .comment .c-head{ font-weight:bold; color:#17385E; }
+  .comment .c-date{ font-weight:normal; color:#8AA0BC; font-size:9px; margin-left:6px; }
+  .comment .c-text{ color:#1B2A3C; margin-top:2px; word-wrap:break-word; }
+  .comment-form{ margin-top:6px; display:flex; gap:6px; align-items:flex-start; flex-wrap:wrap; }
+  .comment-form textarea{
+    flex:1; min-width:200px; font-family:Verdana,Tahoma,sans-serif; font-size:11px;
+    padding:4px; border:1px solid #8FA9C7; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.15);
+    resize:vertical; min-height:32px;
+  }
+  .no-comments{ font-size:10px; color:#8AA0BC; margin-top:5px; font-style:italic; }
+
+  .empty{ padding:14px; color:#5A7EA0; font-size:11px; text-align:center; }
+  canvas{ width:100%; display:block; background:#FFFFFF; }
+  .chart-note{ font-size:10px; color:#5A7EA0; margin-top:6px; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:10px; color:#3A5A80; margin-top:5px; }
+  .legend .dot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:3px; background:#3F6CA8; }
+
+  .footer{ text-align:center; font-size:10px; color:#6E88A6; margin-top:16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner">
+    <h1>&#9733; FORUM KONESERA &#9733;</h1>
+    <p>Forum Konesera - opracowujemy wsp&oacute;lny wsp&oacute;&#322;czynnik op&#322;acalno&#347;ci od 2026 roku</p>
+  </div>
+  <div class="navbar">Jeste&#347; tutaj: <b>Strona g&#322;&oacute;wna</b> &raquo; <b>Ranking</b> &raquo; Dodaj trunek i zag&#322;osuj</div>
+
+  <div class="nickbar">
+    <span><b>Tw&oacute;j nick:</b></span>
+    <input type="text" id="global-nick" placeholder="np. Piwosz_69" maxlength="24">
+    <span style="color:#8A7A2E;">u&#380;ywany do dodawania post&oacute;w i g&#322;osowania (nie zapisuje si&#281; po od&#347;wie&#380;eniu strony)</span>
+  </div>
+
+  <div class="box" id="admin-box" style="display:none;">
+    <div class="box-head">&raquo; Panel admina</div>
+    <div class="box-body">
+      <fieldset>
+        <legend>Banowanie u&#380;ytkownik&oacute;w</legend>
+        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+          <input type="text" id="ban-nick-input" placeholder="nick do zbanowania" style="width:200px;">
+          <button class="btn btn-small" id="ban-btn">Zbanuj</button>
+        </div>
+        <div id="banned-list" style="margin-top:8px;"></div>
+        <p style="font-size:10px; color:#8A7A2E; margin:8px 0 0;">Uwaga: to zwyk&#322;e sprawdzenie nicku w kodzie strony, kt&oacute;ry jest publicznie widoczny w repozytorium na GitHubie \u2014 to nie jest prawdziwe zabezpieczenie przed kim&#347;, kto zna si&#281; na rzeczy.</p>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-head">&raquo; Dodaj nowy trunek</div>
+    <div class="box-body">
+      <fieldset>
+        <legend>Dane podstawowe</legend>
+        <table class="form-table">
+          <tr>
+            <td class="lbl">Nazwa trunku</td>
+            <td><input type="text" id="in-name" placeholder="np. &#379;ubr&oacute;wka"></td>
+            <td class="lbl">Rodzaj</td>
+            <td>
+              <select id="in-rodzaj">
+                <option value="">wybierz...</option>
+                <option value="w&oacute;dka">w&oacute;dka</option>
+                <option value="piwo">piwo</option>
+                <option value="wino">wino</option>
+                <option value="rum">rum</option>
+                <option value="whisky">whisky</option>
+                <option value="gin">gin</option>
+                <option value="likier">likier</option>
+                <option value="cydr">cydr</option>
+                <option value="brandy/koniak">brandy / koniak</option>
+                <option value="inne">inne</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="lbl">Cena (z&#322;)</td>
+            <td><input type="number" id="in-cena" min="0" step="1" placeholder="45"></td>
+            <td class="lbl">Moc (%)</td>
+            <td><input type="number" id="in-moc" min="1" max="96" step="1" placeholder="40"></td>
+          </tr>
+          <tr>
+            <td class="lbl">Profil smaku</td>
+            <td colspan="3"><input type="text" id="in-profil" placeholder="np. owocowy, czysta, korzenny"></td>
+          </tr>
+          <tr>
+            <td class="lbl">Zdj&#281;cie (link URL)</td>
+            <td colspan="3"><input type="text" id="in-photo" placeholder="https://.../butelka.jpg (opcjonalnie)"></td>
+          </tr>
+        </table>
+      </fieldset>
+      <fieldset>
+        <legend>Twoja pierwsza ocena (mo&#380;na j&#261; potem zmieni&#263; g&#322;osem obok wpisu)</legend>
+        <table class="form-table">
+          <tr>
+            <td class="lbl">Smak (1-100)</td>
+            <td><input type="number" id="in-smak" min="1" max="100" step="1" placeholder="70"></td>
+            <td class="lbl">Kac (1-5)</td>
+            <td><input type="number" id="in-kac" min="1" max="5" step="1" placeholder="3"></td>
+          </tr>
+        </table>
+      </fieldset>
+      <button class="btn" id="add-btn">Dodaj post &raquo;</button>
+      <div class="err" id="err"></div>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-head">&raquo; Ranking trunk&oacute;w <span id="item-count" style="font-weight:normal; float:right;"></span></div>
+    <div class="filters">
+      <div>
+        <label for="filter-rodzaj">Filtruj rodzaj:</label>
+        <select id="filter-rodzaj"><option value="">wszystkie rodzaje</option></select>
+      </div>
+      <div>
+        <label for="filter-profil">Filtruj profil smaku:</label>
+        <select id="filter-profil"><option value="">wszystkie profile</option></select>
+      </div>
+      <div style="align-self:flex-end;">
+        <button class="btn btn-small" id="refresh-btn">Od&#347;wie&#380; w&#261;tek</button>
+      </div>
+    </div>
+    <div class="box-body" style="padding:0;">
+      <table class="thread" id="list"></table>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-head">&raquo; Wykres op&#322;acalno&#347;ci - ranking wg WSK</div>
+    <div class="box-body"><canvas id="bar-chart" height="220"></canvas></div>
+  </div>
+
+  <div class="box">
+    <div class="box-head">&raquo; Wykres op&#322;acalno&#347;ci - cena vs &#347;redni smak</div>
+    <div class="box-body">
+      <canvas id="scatter-chart" height="320"></canvas>
+      <div class="legend">
+        <span><span class="dot"></span>rozmiar kropki = moc</span>
+        <span><span class="dot" style="background:#B02E0C;"></span>kolor = poziom kaca (jaskrawiej = gorzej)</span>
+      </div>
+      <p class="chart-note">D&oacute;&#322; po prawej to strefa okazji: tanio i smacznie. G&oacute;ra po lewej - omijajcie szerokim &#322;ukiem.</p>
+    </div>
+  </div>
+
+  <p class="footer">Powered by wsp&oacute;lny wsp&oacute;&#322;czynnik &middot; strona od&#347;wie&#380;a si&#281; automatycznie co 60 s</p>
+</div>
+
+<script>
+// --- KONFIGURACJA BAZY DANYCH ---
+// Wklej tu adres swojej darmowej bazy Firebase Realtime Database
+// (wyglada np. tak: https://ranking-alkoholi-default-rtdb.europe-west1.firebasedatabase.app)
+const FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
+// --- KONIEC KONFIGURACJI ---
+
+let items = [];
+let bannedNicks = [];
+const ADMIN_NICK = 'KochamPiwo69';
+
+const els = {
+  globalNick: document.getElementById('global-nick'),
+  name: document.getElementById('in-name'),
+  cena: document.getElementById('in-cena'),
+  smak: document.getElementById('in-smak'),
+  kac: document.getElementById('in-kac'),
+  moc: document.getElementById('in-moc'),
+  rodzaj: document.getElementById('in-rodzaj'),
+  profil: document.getElementById('in-profil'),
+  photo: document.getElementById('in-photo'),
+  err: document.getElementById('err'),
+  list: document.getElementById('list'),
+  count: document.getElementById('item-count'),
+  filterRodzaj: document.getElementById('filter-rodzaj'),
+  filterProfil: document.getElementById('filter-profil'),
+  adminBox: document.getElementById('admin-box'),
+  banNickInput: document.getElementById('ban-nick-input'),
+  bannedList: document.getElementById('banned-list'),
+};
+
+function isAdmin(){ return els.globalNick.value.trim() === ADMIN_NICK; }
+function isBanned(nick){ return bannedNicks.some(b => b.toLowerCase() === nick.toLowerCase()); }
+
+function avg(voteMap){
+  const vals = Object.values(voteMap || {});
+  if(vals.length === 0) return 0;
+  return vals.reduce((a,b)=>a+b,0) / vals.length;
+}
+function voteCount(voteMap){ return Object.keys(voteMap || {}).length; }
+
+function score(it){
+  const smak = avg(it.smakVotes);
+  const kac = avg(it.kacVotes) || 1;
+  const s = Math.pow(smak/100, 1);
+  const m = Math.pow(it.moc/40, 1);
+  const c = Math.pow(Math.max(it.cena,1)/100, 1);
+  const k = Math.pow(kac/5, 1);
+  return (s*m)/(c*k)*100;
+}
+
+async function loadData(){
+  try{
+    const [itemsRes, bannedRes] = await Promise.all([
+      fetch(`${FIREBASE_URL}/items.json`),
+      fetch(`${FIREBASE_URL}/banned.json`),
+    ]);
+    if(!itemsRes.ok || !bannedRes.ok) throw new Error('blad odpowiedzi bazy');
+    const itemsData = await itemsRes.json();
+    const bannedData = await bannedRes.json();
+    if(itemsData !== null && !Array.isArray(itemsData)){
+      throw new Error('Nieprawidłowy format danych items');
+    }
+    if(bannedData !== null && !Array.isArray(bannedData)){
+      throw new Error('Nieprawidłowy format danych banned');
+    }
+    items = Array.isArray(itemsData) ? itemsData : [];
+    bannedNicks = Array.isArray(bannedData) ? bannedData : [];
+    els.err.style.display = 'none';
+  }catch(e){
+    els.err.textContent = 'Nie mo\u017cna po\u0142\u0105czy\u0107 si\u0119 z baz\u0105 danych forum. Sprawd\u017a adres FIREBASE_URL w kodzie strony.';
+    els.err.style.display = 'block';
+  }
+  renderAll();
+}
+async function saveItems(){
+  try{
+    const res = await fetch(`${FIREBASE_URL}/items.json`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(items)
+    });
+    if(!res.ok) throw new Error('blad zapisu');
+  }catch(e){
+    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; posta na serwerze forum. Spr&oacute;bujcie ponownie.';
+    els.err.style.display = 'block';
+  }
+}
+async function saveBanned(){
+  try{
+    const res = await fetch(`${FIREBASE_URL}/banned.json`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(bannedNicks)
+    });
+    if(!res.ok) throw new Error('blad zapisu');
+  }catch(e){
+    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; listy bana. Spr&oacute;bujcie ponownie.';
+    els.err.style.display = 'block';
+  }
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : s;
+  return d.innerHTML;
+}
+function formatDate(ts){
+  if(!ts) return '';
+  const d = new Date(ts);
+  const pad = n => n.toString().padStart(2,'0');
+  return `${pad(d.getDate())}.${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function getFilteredItems(){
+  const r = els.filterRodzaj.value;
+  const p = els.filterProfil.value;
+  return items.filter(it =>
+    (!r || it.rodzaj === r) &&
+    (!p || (it.profil||'').toLowerCase() === p.toLowerCase())
+  );
+}
+
+function fillSelect(select, values, allLabel){
+  const current = select.value;
+  select.innerHTML = `<option value="">${allLabel}</option>` +
+    values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+  if(values.includes(current)) select.value = current;
+}
+function populateFilterOptions(){
+  const rodzaje = Array.from(new Set(items.map(i=>i.rodzaj).filter(Boolean))).sort();
+  const profile = Array.from(new Set(items.map(i=>(i.profil||'').trim()).filter(Boolean))).sort();
+  fillSelect(els.filterRodzaj, rodzaje, 'wszystkie rodzaje');
+  fillSelect(els.filterProfil, profile, 'wszystkie profile');
+}
+
+function renderAdminPanel(){
+  const admin = isAdmin();
+  els.adminBox.style.display = admin ? 'block' : 'none';
+  if(!admin) return;
+  els.bannedList.innerHTML = bannedNicks.length
+    ? bannedNicks.map(n => `<span class="tag" style="display:inline-flex; align-items:center; gap:6px; background:#F5E6E6; border:1px solid #E3A98F; border-radius:3px; padding:2px 6px; margin:2px 4px 2px 0; font-size:11px;">
+        ${escapeHtml(n)} <button class="btn btn-small unban-btn" data-nick="${escapeHtml(n)}" style="padding:1px 5px;">Odbanuj</button>
+      </span>`).join('')
+    : '<span style="font-size:10px; color:#8AA0BC;">Nikt nie jest zbanowany.</span>';
+  els.bannedList.querySelectorAll('.unban-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      bannedNicks = bannedNicks.filter(n => n !== btn.dataset.nick);
+      await saveBanned();
+      renderAdminPanel();
+    });
+  });
+}
+
+function renderAll(){
+  renderAdminPanel();
+  populateFilterOptions();
+  renderList();
+  renderBarChart();
+  renderScatterChart();
+}
+
+function renderList(){
+  const filtered = getFilteredItems();
+  els.count.textContent = `[${filtered.length}${filtered.length !== items.length ? ' z '+items.length : ''} post\u00f3w]`;
+  if(items.length === 0){
+    els.list.innerHTML = '<tr><td class="empty">W&#261;tek jest pusty. Do&#322;&oacute;&#380;cie pierwszy post powy&#380;ej.</td></tr>';
+    return;
+  }
+  if(filtered.length === 0){
+    els.list.innerHTML = '<tr><td class="empty">&#379;aden trunek nie pasuje do wybranych filtr&oacute;w.</td></tr>';
+    return;
+  }
+  const scored = filtered.map(it=>({ it, sc: score(it) })).sort((a,b)=>b.sc-a.sc);
+  const admin = isAdmin();
+  els.list.innerHTML = scored.map(({it,sc}, i)=>{
+    const smakAvg = avg(it.smakVotes), kacAvg = avg(it.kacVotes);
+    const smakN = voteCount(it.smakVotes), kacN = voteCount(it.kacVotes);
+    const photoHtml = it.photoUrl
+      ? `<img src="${escapeHtml(it.photoUrl)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="avatar-fallback" style="display:none; height:80px; align-items:center;">brak<br>zdj&#281;cia</div>`
+      : `<div class="avatar-fallback" style="height:80px; display:flex; align-items:center; justify-content:center;">brak<br>zdj&#281;cia</div>`;
+    const comments = it.comments || [];
+    const commentsHtml = comments.length
+      ? comments.map((c,cidx) => `<div class="comment">
+          <span class="c-head">${escapeHtml(c.nick)}<span class="c-date">${formatDate(c.ts)}</span>${admin ? ` <button class="btn btn-small del-comment-btn" data-id="${it.id}" data-idx="${cidx}" style="margin-left:6px; padding:1px 5px;">Usu&#324;</button>` : ''}</span>
+          <div class="c-text">${escapeHtml(c.text)}</div>
+        </div>`).join('')
+      : `<div class="no-comments">Brak komentarzy \u2014 b&#261;d&#378; pierwszy.</div>`;
+    const adminButtons = admin
+      ? `<span style="display:inline-flex; gap:4px;">
+          <button class="btn btn-small edit-btn" data-id="${it.id}">Edytuj</button>
+          <button class="btn btn-small del-item-btn" data-id="${it.id}">Usu&#324;</button>
+        </span>`
+      : '';
+    const editForm = admin ? `
+      <div class="edit-form" data-id="${it.id}" style="display:none; margin-top:6px; padding:8px; background:#FFF8E8; border:1px dashed #E0C56B;">
+        <table class="form-table">
+          <tr>
+            <td class="lbl">Nazwa</td><td><input type="text" class="edit-name" value="${escapeHtml(it.name)}"></td>
+            <td class="lbl">Rodzaj</td>
+            <td>
+              <select class="edit-rodzaj">
+                ${['w\u00f3dka','piwo','wino','rum','whisky','gin','likier','cydr','brandy/koniak','inne'].map(r=>`<option value="${r}" ${it.rodzaj===r?'selected':''}>${r}</option>`).join('')}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="lbl">Cena (z&#322;)</td><td><input type="number" class="edit-cena" value="${it.cena}"></td>
+            <td class="lbl">Moc (%)</td><td><input type="number" class="edit-moc" value="${it.moc}"></td>
+          </tr>
+          <tr>
+            <td class="lbl">Profil smaku</td><td colspan="3"><input type="text" class="edit-profil" value="${escapeHtml(it.profil||'')}"></td>
+          </tr>
+          <tr>
+            <td class="lbl">Zdj&#281;cie (URL)</td><td colspan="3"><input type="text" class="edit-photo" value="${escapeHtml(it.photoUrl||'')}"></td>
+          </tr>
+        </table>
+        <button class="btn btn-small save-edit-btn" data-id="${it.id}">Zapisz zmiany</button>
+        <button class="btn btn-small cancel-edit-btn" data-id="${it.id}">Anuluj</button>
+      </div>` : '';
+    return `<tr>
+      <td class="avatar-cell">
+        <div class="avatar-box">${photoHtml}</div>
+        <div class="nick">${escapeHtml(it.nick || 'anonim')}</div>
+        <div class="rank-badge">#${i+1}</div>
+      </td>
+      <td>
+        <div class="title-line">
+          <span class="item-name">${escapeHtml(it.name)} <span class="rodzaj">[${escapeHtml(it.rodzaj||'brak rodzaju')}]</span></span>
+          <span style="display:flex; gap:8px; align-items:center;">
+            <span class="wsk">WSK: ${sc.toFixed(1)}</span>
+            ${adminButtons}
+          </span>
+        </div>
+        <div class="meta">
+          <span class="stat-mini">Cena: <b>${it.cena} z&#322;</b></span>
+          <span class="stat-mini">Moc: <b>${it.moc}%</b></span>
+          <span class="stat-mini">&#346;r. smak: <b>${smakAvg.toFixed(0)}/100</b> (${smakN} g&#322;.)</span>
+          <span class="stat-mini">&#346;r. kac: <b>${kacAvg.toFixed(1)}/5</b> (${kacN} g&#322;.)</span>
+        </div>
+        ${it.profil ? `<div class="quote">Profil smaku: ${escapeHtml(it.profil)}</div>` : ''}
+        ${editForm}
+        <div class="vote-box">
+          <span><b>Zag&#322;osuj:</b></span>
+          <span class="fld">smak <input type="number" min="1" max="100" step="1" class="vote-smak" data-id="${it.id}" placeholder="1-100"></span>
+          <span class="fld">kac <input type="number" min="1" max="5" step="1" class="vote-kac" data-id="${it.id}" placeholder="1-5"></span>
+          <button class="btn btn-small vote-btn" data-id="${it.id}">Wy&#347;lij g&#322;os</button>
+        </div>
+        <div class="comments">
+          ${commentsHtml}
+          <div class="comment-form">
+            <textarea class="comment-input" data-id="${it.id}" placeholder="Napisz komentarz..." maxlength="400"></textarea>
+            <button class="btn btn-small comment-btn" data-id="${it.id}">Dodaj komentarz</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  els.list.querySelectorAll('.vote-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.id;
+      const nick = els.globalNick.value.trim();
+      const row = btn.closest('tr');
+      const smakVal = parseFloat(row.querySelector('.vote-smak').value);
+      const kacVal = parseFloat(row.querySelector('.vote-kac').value);
+      els.err.style.display = 'none';
+      if(!nick){
+        els.err.textContent = 'Wpisz najpierw sw&oacute;j nick na g&oacute;rze strony, &#380;eby zag&#322;osowa&#263;.';
+        els.err.style.display = 'block';
+        els.globalNick.focus();
+        return;
+      }
+      if(isBanned(nick) && !isAdmin()){
+        els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
+        els.err.style.display = 'block';
+        return;
+      }
+      if(isNaN(smakVal) && isNaN(kacVal)){
+        els.err.textContent = 'Podaj ocen&#281; smaku i/lub kaca, zanim wy&#347;lesz g&#322;os.';
+        els.err.style.display = 'block';
+        return;
+      }
+      const target = items.find(x=>x.id === id);
+      if(!target) return;
+      if(!isNaN(smakVal) && smakVal>=1 && smakVal<=100){
+        target.smakVotes = target.smakVotes || {};
+        target.smakVotes[nick] = smakVal;
+      }
+      if(!isNaN(kacVal) && kacVal>=1 && kacVal<=5){
+        target.kacVotes = target.kacVotes || {};
+        target.kacVotes[nick] = kacVal;
+      }
+      await saveItems();
+      renderAll();
+    });
+  });
+
+  els.list.querySelectorAll('.comment-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.id;
+      const nick = els.globalNick.value.trim();
+      const row = btn.closest('tr');
+      const textarea = row.querySelector('.comment-input');
+      const text = textarea.value.trim();
+      els.err.style.display = 'none';
+      if(!nick){
+        els.err.textContent = 'Wpisz najpierw sw&oacute;j nick na g&oacute;rze strony, &#380;eby doda&#263; komentarz.';
+        els.err.style.display = 'block';
+        els.globalNick.focus();
+        return;
+      }
+      if(isBanned(nick) && !isAdmin()){
+        els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
+        els.err.style.display = 'block';
+        return;
+      }
+      if(!text){
+        els.err.textContent = 'Wpisz tre&#347;&#263; komentarza, zanim go wy&#347;lesz.';
+        els.err.style.display = 'block';
+        return;
+      }
+      const target = items.find(x=>x.id === id);
+      if(!target) return;
+      target.comments = target.comments || [];
+      target.comments.push({ nick, text, ts: Date.now() });
+      textarea.value = '';
+      await saveItems();
+      renderAll();
+    });
+  });
+
+  els.list.querySelectorAll('.edit-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const form = els.list.querySelector(`.edit-form[data-id="${btn.dataset.id}"]`);
+      if(form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+  els.list.querySelectorAll('.cancel-edit-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const form = els.list.querySelector(`.edit-form[data-id="${btn.dataset.id}"]`);
+      if(form) form.style.display = 'none';
+    });
+  });
+  els.list.querySelectorAll('.save-edit-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.id;
+      const form = els.list.querySelector(`.edit-form[data-id="${id}"]`);
+      const target = items.find(x=>x.id === id);
+      if(!target || !form) return;
+      const name = form.querySelector('.edit-name').value.trim();
+      const cena = parseFloat(form.querySelector('.edit-cena').value);
+      const moc = parseFloat(form.querySelector('.edit-moc').value);
+      const rodzaj = form.querySelector('.edit-rodzaj').value;
+      const profil = form.querySelector('.edit-profil').value.trim();
+      const photoUrl = form.querySelector('.edit-photo').value.trim();
+      if(!name || isNaN(cena) || cena<=0 || isNaN(moc) || moc<=0){
+        els.err.textContent = 'Popraw dane w formularzu edycji \u2014 nazwa, cena i moc musz&#261; by&#263; poprawne.';
+        els.err.style.display = 'block';
+        return;
+      }
+      Object.assign(target, { name, cena, moc, rodzaj, profil, photoUrl });
+      await saveItems();
+      renderAll();
+    });
+  });
+  els.list.querySelectorAll('.del-item-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('Na pewno usun&#261;&#263; ten trunek z rankingu?')) return;
+      items = items.filter(x => x.id !== btn.dataset.id);
+      await saveItems();
+      renderAll();
+    });
+  });
+  els.list.querySelectorAll('.del-comment-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('Na pewno usun&#261;&#263; ten komentarz?')) return;
+      const target = items.find(x=>x.id === btn.dataset.id);
+      if(!target || !target.comments) return;
+      target.comments.splice(parseInt(btn.dataset.idx), 1);
+      await saveItems();
+      renderAll();
+    });
+  });
+}
+
+function setupCanvas(canvas){
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const h = canvas.height || 240;
+  canvas.width = rect.width * dpr;
+  canvas.height = h * dpr;
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: rect.width, h };
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+  ctx.fill();
+}
+function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'\u2026' : s; }
+
+function renderBarChart(){
+  const canvas = document.getElementById('bar-chart');
+  const { ctx, w, h } = setupCanvas(canvas);
+  ctx.clearRect(0,0,w,h);
+  const filtered = getFilteredItems();
+  if(filtered.length === 0){
+    ctx.fillStyle = '#5A7EA0';
+    ctx.font = '11px Verdana';
+    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wynik\u00f3w dla filtr\u00f3w.', 8, h/2);
+    return;
+  }
+  const scored = filtered.map(it=>({name:it.name, sc:score(it)})).sort((a,b)=>b.sc-a.sc).slice(0,10);
+  const max = Math.max(...scored.map(x=>x.sc), 1);
+  const rowH = h / scored.length;
+  const labelW = 110;
+  ctx.font = '11px Verdana';
+  scored.forEach((it, i)=>{
+    const y = i * rowH;
+    const barMaxW = w - labelW - 50;
+    const barW = Math.max(2, (it.sc/max) * barMaxW);
+    ctx.fillStyle = '#3A5A80';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(truncate(it.name, 14), 0, y + rowH/2);
+    ctx.fillStyle = '#3F6CA8';
+    ctx.strokeStyle = '#17385E';
+    const barH = Math.max(6, rowH*0.5);
+    roundRect(ctx, labelW, y + (rowH-barH)/2, barW, barH, 2);
+    ctx.strokeRect(labelW, y + (rowH-barH)/2, barW, barH);
+    ctx.fillStyle = '#17385E';
+    ctx.fillText(it.sc.toFixed(1), labelW + barW + 8, y + rowH/2);
+  });
+}
+
+let scatterPoints = [];
+function renderScatterChart(){
+  const canvas = document.getElementById('scatter-chart');
+  const { ctx, w, h } = setupCanvas(canvas);
+  ctx.clearRect(0,0,w,h);
+  scatterPoints = [];
+  const filtered = getFilteredItems();
+  if(filtered.length === 0){
+    ctx.fillStyle = '#5A7EA0';
+    ctx.font = '11px Verdana';
+    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wynik\u00f3w dla filtr\u00f3w.', 8, h/2);
+    return;
+  }
+  const padL = 40, padB = 30, padT = 10, padR = 15;
+  const plotW = w - padL - padR;
+  const plotH = h - padT - padB;
+  const maxCena = Math.max(...filtered.map(i=>i.cena), 10) * 1.1;
+
+  ctx.strokeStyle = '#B7CBE6';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT+plotH); ctx.lineTo(padL+plotW, padT+plotH);
+  ctx.stroke();
+  ctx.fillStyle = '#5A7EA0';
+  ctx.font = '10px Verdana';
+  ctx.fillText('0', padL-6, padT+plotH+14);
+  ctx.fillText(Math.round(maxCena)+' z\u0142', padL+plotW-30, padT+plotH+14);
+  ctx.save();
+  ctx.translate(10, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('smak \u2192', 0, 0);
+  ctx.restore();
+  ctx.fillText('cena \u2192', padL+plotW/2-15, padT+plotH+14);
+
+  filtered.forEach(it=>{
+    const smakAvg = avg(it.smakVotes), kacAvg = avg(it.kacVotes) || 1;
+    const x = padL + (it.cena/maxCena) * plotW;
+    const y = padT + plotH - (smakAvg/100) * plotH;
+    const r = 4 + (it.moc/96) * 14;
+    const kacT = (kacAvg-1)/4;
+    const color = mixColor('#5B8A4A', '#B02E0C', kacT);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = '#17385E';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    scatterPoints.push({x, y, r, it});
+  });
+}
+function mixColor(c1, c2, t){
+  const p1 = hexToRgb(c1), p2 = hexToRgb(c2);
+  const r = Math.round(p1.r + (p2.r-p1.r)*t);
+  const g = Math.round(p1.g + (p2.g-p1.g)*t);
+  const b = Math.round(p1.b + (p2.b-p1.b)*t);
+  return `rgb(${r},${g},${b})`;
+}
+function hexToRgb(hex){
+  const v = parseInt(hex.slice(1),16);
+  return { r:(v>>16)&255, g:(v>>8)&255, b:v&255 };
+}
+const scatterCanvas = document.getElementById('scatter-chart');
+scatterCanvas.addEventListener('mousemove', (e)=>{
+  const rect = scatterCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const hit = scatterPoints.find(p => Math.hypot(p.x-mx, p.y-my) <= p.r+2);
+  scatterCanvas.title = hit ? `${hit.it.name} \u2014 ${hit.it.cena} z\u0142, moc ${hit.it.moc}%` : '';
+});
+
+document.getElementById('add-btn').addEventListener('click', async ()=>{
+  const nick = els.globalNick.value.trim();
+  const name = els.name.value.trim();
+  const cena = parseFloat(els.cena.value);
+  const smak = parseFloat(els.smak.value);
+  const kac = parseFloat(els.kac.value);
+  const moc = parseFloat(els.moc.value);
+  const rodzaj = els.rodzaj.value;
+  const profil = els.profil.value.trim();
+  const photoUrl = els.photo.value.trim();
+
+  if(!nick || !name || isNaN(cena) || isNaN(smak) || isNaN(kac) || isNaN(moc) ||
+     cena<=0 || smak<1 || smak>100 || kac<1 || kac>5 || moc<=0 || !rodzaj){
+    els.err.textContent = 'Uzupe&#322;nij nick, nazw&#281;, rodzaj i wszystkie oceny poprawnymi warto&#347;ciami.';
+    els.err.style.display = 'block';
+    return;
+  }
+  els.err.style.display = 'none';
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  items.push({
+    id, nick, name, cena, moc, rodzaj, profil, photoUrl,
+    smakVotes: { [nick]: smak },
+    kacVotes: { [nick]: kac },
+    comments: [],
+  });
+  els.name.value=''; els.cena.value=''; els.smak.value=''; els.kac.value='';
+  els.moc.value=''; els.rodzaj.value=''; els.profil.value=''; els.photo.value='';
+  await saveItems();
+  renderAll();
+});
+
+els.filterRodzaj.addEventListener('change', renderAll);
+els.filterProfil.addEventListener('change', renderAll);
+document.getElementById('refresh-btn').addEventListener('click', loadItems);
+window.addEventListener('resize', renderAll);
+window.addEventListener('focus', loadItems);
+
+loadData();
+setInterval(loadItems, 20000);
+</script>
+</body>
+</html>
