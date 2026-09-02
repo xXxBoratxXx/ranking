@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ranking Trunków - Forum Konesera</title>
+<title>Ranking Trunk&oacute;w - Forum Konesera</title>
 <style>
   *{ box-sizing:border-box; }
   body{
@@ -92,7 +92,12 @@
     background:#FFF6D9; border:1px solid #E0C56B; padding:6px 10px; margin-top:12px;
     font-size:11px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   }
-  .nickbar input[type=text]{ width:180px; display:inline-block; }
+  .nickbar input[type=text], .nickbar input[type=password]{ width:170px; display:inline-block; }
+  .pw-warning{
+    color:#B02E0C; font-size:11px; font-weight:bold; background:#FBEAE5;
+    border:1px solid #E3A98F; padding:5px 8px; width:100%;
+  }
+  #logged-in-bar{ width:100%; }
 
   .filters{ display:flex; gap:14px; flex-wrap:wrap; padding:8px 12px; background:#EEF4FC; border-bottom:1px solid #B7CBE6; font-size:11px; }
   .filters label{ display:block; color:#3A5A80; margin-bottom:2px; }
@@ -117,6 +122,19 @@
   .rank-badge{
     display:inline-block; background:#2C4F80; color:#fff; font-size:9px; font-weight:bold;
     padding:1px 5px; border-radius:2px; margin-top:3px;
+  }
+
+  .mini-avatar{ border-radius:50%; object-fit:cover; vertical-align:middle; border:1px solid #8FA9C7; }
+  .mini-avatar-fallback{
+    display:inline-flex; align-items:center; justify-content:center; border-radius:50%;
+    color:#fff; font-weight:bold; vertical-align:middle; font-family:Verdana,Tahoma,sans-serif;
+  }
+  .nick-link{ cursor:pointer; }
+  .nick-link .nick-text{ text-decoration:underline; text-decoration-style:dotted; }
+  .nick-link:hover .nick-text{ color:#C1440E; }
+  .rank-tag{
+    display:inline-block; font-size:9px; font-weight:bold; padding:1px 5px; border-radius:2px;
+    color:#fff; margin-left:4px; vertical-align:middle;
   }
 
   .title-line{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
@@ -156,10 +174,8 @@
   .no-comments{ font-size:10px; color:#8AA0BC; margin-top:5px; font-style:italic; }
 
   .empty{ padding:14px; color:#5A7EA0; font-size:11px; text-align:center; }
-  canvas{ width:100%; display:block; background:#FFFFFF; }
-  .chart-note{ font-size:10px; color:#5A7EA0; margin-top:6px; }
-  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:10px; color:#3A5A80; margin-top:5px; }
-  .legend .dot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:3px; background:#3F6CA8; }
+
+  #profile-items > div:last-child{ border-bottom:none !important; }
 
   .footer{ text-align:center; font-size:10px; color:#6E88A6; margin-top:16px; }
 </style>
@@ -169,28 +185,81 @@
 
   <div class="banner">
     <h1>&#9733; FORUM KONESERA &#9733;</h1>
-    <p>Forum Konesera - opracowujemy wspólny współczynnik opłacalności od 2026 roku</p>
+    <p>Forum Konesera - opracowujemy wsp&oacute;lny wsp&oacute;&#322;czynnik op&#322;acalno&#347;ci od 2026 roku</p>
   </div>
-  <div class="navbar">Jesteś tutaj: <b>Strona główna</b> &raquo; <b>Ranking</b> &raquo; Dodaj trunek i zagłosuj</div>
+  <div class="navbar">Jeste&#347; tutaj: <b>Strona g&#322;&oacute;wna</b> &raquo; <b>Ranking</b> &raquo; Dodaj trunek i zag&#322;osuj</div>
 
-  <div class="nickbar">
-    <span><b>Twój nick:</b></span>
-    <input type="text" id="global-nick" placeholder="np. Piwosz_69" maxlength="24">
-    <span style="color:#8A7A2E;">używany do dodawania postów i głosowania (nie zapisuje się po odświeżeniu strony)</span>
+  <div class="nickbar" id="account-bar">
+    <div id="logged-out-bar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <span>Nie jeste&#347; zalogowany.</span>
+      <button class="btn btn-small" id="show-login-btn">Zaloguj si&#281;</button>
+      <button class="btn btn-small" id="show-register-btn">Za&#322;&oacute;&#380; konto</button>
+    </div>
+    <div id="logged-in-bar" style="display:none;">
+      Zalogowany jako: <b id="logged-nick"></b>
+      <button class="btn btn-small" id="my-profile-btn" style="margin-left:8px;">M&oacute;j profil</button>
+      <button class="btn btn-small" id="logout-btn" style="margin-left:4px;">Wyloguj</button>
+    </div>
+    <div id="login-form" style="display:none; width:100%; margin-top:8px;">
+      <div class="pw-warning">Uwaga: ta baza danych nie ma has&#322;a administracyjnego &mdash; ka&#380;dy, kto zna jej adres, mo&#380;e odczyta&#263; zapisane tu has&#322;a wprost z bazy. NIE u&#380;ywaj tutaj prawdziwego has&#322;a, kt&oacute;rego u&#380;ywasz gdzie indziej!</div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:6px;">
+        <span><b>Nick:</b></span>
+        <input type="text" id="login-nick" placeholder="np. Piwosz_69" maxlength="24">
+        <span><b>Has&#322;o:</b></span>
+        <input type="password" id="login-pass" placeholder="dowolne, byle nie prawdziwe" maxlength="40">
+        <button class="btn btn-small" id="login-submit-btn">Zaloguj</button>
+        <button class="btn btn-small" id="login-cancel-btn">Anuluj</button>
+      </div>
+    </div>
+    <div id="register-form" style="display:none; width:100%; margin-top:8px;">
+      <div class="pw-warning">Uwaga: ta baza danych nie ma has&#322;a administracyjnego &mdash; ka&#380;dy, kto zna jej adres, mo&#380;e odczyta&#263; zapisane tu has&#322;a wprost z bazy. NIE u&#380;ywaj tutaj prawdziwego has&#322;a, kt&oacute;rego u&#380;ywasz gdzie indziej!</div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:6px;">
+        <span><b>Nick:</b></span>
+        <input type="text" id="register-nick" placeholder="np. Piwosz_69" maxlength="24">
+        <span><b>Has&#322;o:</b></span>
+        <input type="password" id="register-pass" placeholder="dowolne, byle nie prawdziwe" maxlength="40">
+        <button class="btn btn-small" id="register-submit-btn">Za&#322;&oacute;&#380; konto</button>
+        <button class="btn btn-small" id="register-cancel-btn">Anuluj</button>
+      </div>
+    </div>
   </div>
 
   <div class="box" id="admin-box" style="display:none;">
     <div class="box-head">&raquo; Panel admina</div>
     <div class="box-body">
       <fieldset>
-        <legend>Banowanie użytkowników</legend>
+        <legend>Banowanie u&#380;ytkownik&oacute;w</legend>
         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
           <input type="text" id="ban-nick-input" placeholder="nick do zbanowania" style="width:200px;">
           <button class="btn btn-small" id="ban-btn">Zbanuj</button>
         </div>
         <div id="banned-list" style="margin-top:8px;"></div>
-        <p style="font-size:10px; color:#8A7A2E; margin:8px 0 0;">Uwaga: to zwykłe sprawdzenie nicku w kodzie strony, który jest publicznie widoczny w repozytorium na GitHubie &mdash; to nie jest prawdziwe zabezpieczenie przed kimś, kto zna się na rzeczy.</p>
+        <p style="font-size:10px; color:#8A7A2E; margin:8px 0 0;">Uwaga: to zwyk&#322;e sprawdzenie nicku w kodzie strony, kt&oacute;ry jest publicznie widoczny w repozytorium na GitHubie \u2014 to nie jest prawdziwe zabezpieczenie przed kim&#347;, kto zna si&#281; na rzeczy.</p>
       </fieldset>
+      <fieldset>
+        <legend>Rangi u&#380;ytkownik&oacute;w</legend>
+        <div id="rank-list"></div>
+      </fieldset>
+    </div>
+  </div>
+
+  <div class="box" id="profile-box" style="display:none;">
+    <div class="box-head">
+      &raquo; Profil u&#380;ytkownika
+      <button class="btn btn-small" id="close-profile-btn" style="float:right;">Zamknij</button>
+    </div>
+    <div class="box-body">
+      <div style="display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap;">
+        <div id="profile-avatar-wrap"></div>
+        <div style="flex:1; min-width:200px;">
+          <div style="font-size:16px; font-weight:bold; color:#17385E;" id="profile-nick-name"></div>
+          <div id="profile-rank-wrap" style="margin:4px 0;"></div>
+          <div id="profile-stats" style="font-size:11px; color:#4B6483;"></div>
+          <div id="profile-edit-wrap" style="margin-top:8px;"></div>
+        </div>
+      </div>
+      <h3 style="font-size:12px; color:#17385E; margin:14px 0 6px;">Najwy&#380;ej oceniane pozycje</h3>
+      <div id="profile-items"></div>
     </div>
   </div>
 
@@ -202,12 +271,12 @@
         <table class="form-table">
           <tr>
             <td class="lbl">Nazwa trunku</td>
-            <td><input type="text" id="in-name" placeholder="np. Żubrówka"></td>
+            <td><input type="text" id="in-name" placeholder="np. &#379;ubr&oacute;wka"></td>
             <td class="lbl">Rodzaj</td>
             <td>
               <select id="in-rodzaj">
                 <option value="">wybierz...</option>
-                <option value="wódka">wódka</option>
+                <option value="w&oacute;dka">w&oacute;dka</option>
                 <option value="piwo">piwo</option>
                 <option value="wino">wino</option>
                 <option value="rum">rum</option>
@@ -221,7 +290,7 @@
             </td>
           </tr>
           <tr>
-            <td class="lbl">Cena (zł)</td>
+            <td class="lbl">Cena (z&#322;)</td>
             <td><input type="number" id="in-cena" min="0" step="1" placeholder="45"></td>
             <td class="lbl">Moc (%)</td>
             <td><input type="number" id="in-moc" min="1" max="96" step="1" placeholder="40"></td>
@@ -231,19 +300,17 @@
             <td colspan="3"><input type="text" id="in-profil" placeholder="np. owocowy, czysta, korzenny"></td>
           </tr>
           <tr>
-            <td class="lbl">Zdjęcie (link URL)</td>
+            <td class="lbl">Zdj&#281;cie (link URL)</td>
             <td colspan="3"><input type="text" id="in-photo" placeholder="https://.../butelka.jpg (opcjonalnie)"></td>
           </tr>
         </table>
       </fieldset>
       <fieldset>
-        <legend>Twoja pierwsza ocena (można ją potem zmienić głosem obok wpisu)</legend>
+        <legend>Twoja pierwsza ocena smaku (mo&#380;na j&#261; potem zmieni&#263; g&#322;osem obok wpisu)</legend>
         <table class="form-table">
           <tr>
             <td class="lbl">Smak (1-100)</td>
             <td><input type="number" id="in-smak" min="1" max="100" step="1" placeholder="70"></td>
-            <td class="lbl">Kac (1-5)</td>
-            <td><input type="number" id="in-kac" min="1" max="5" step="1" placeholder="3"></td>
           </tr>
         </table>
       </fieldset>
@@ -253,7 +320,7 @@
   </div>
 
   <div class="box">
-    <div class="box-head">&raquo; Ranking trunków <span id="item-count" style="font-weight:normal; float:right;"></span></div>
+    <div class="box-head">&raquo; Ranking trunk&oacute;w <span id="item-count" style="font-weight:normal; float:right;"></span></div>
     <div class="filters">
       <div>
         <label for="filter-rodzaj">Filtruj rodzaj:</label>
@@ -264,7 +331,7 @@
         <select id="filter-profil"><option value="">wszystkie profile</option></select>
       </div>
       <div style="align-self:flex-end;">
-        <button class="btn btn-small" id="refresh-btn">Odśwież wątek</button>
+        <button class="btn btn-small" id="refresh-btn">Od&#347;wie&#380; w&#261;tek</button>
       </div>
     </div>
     <div class="box-body" style="padding:0;">
@@ -272,42 +339,36 @@
     </div>
   </div>
 
-  <div class="box">
-    <div class="box-head">&raquo; Wykres opłacalności - ranking wg WSK</div>
-    <div class="box-body"><canvas id="bar-chart" height="220"></canvas></div>
-  </div>
-
-  <div class="box">
-    <div class="box-head">&raquo; Wykres opłacalności - cena vs średni smak</div>
-    <div class="box-body">
-      <canvas id="scatter-chart" height="320"></canvas>
-      <div class="legend">
-        <span><span class="dot"></span>rozmiar kropki = moc</span>
-        <span><span class="dot" style="background:#B02E0C;"></span>kolor = poziom kaca (jaskrawiej = gorzej)</span>
-      </div>
-      <p class="chart-note">Dół po prawej to strefa okazji: tanio i smacznie. Góra po lewej - omijajcie szerokim łukiem.</p>
-    </div>
-  </div>
-
-  <p class="footer">Powered by wspólny współczynnik &middot; strona odświeża się automatycznie co 20 s</p>
+  <p class="footer">Powered by wsp&oacute;lny wsp&oacute;&#322;czynnik &middot; strona od&#347;wie&#380;a si&#281; automatycznie co 20 s</p>
 </div>
 
 <script>
 // --- KONFIGURACJA BAZY DANYCH ---
-const RAW_FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
-const FIREBASE_URL = RAW_FIREBASE_URL.replace(/\/+$/, ''); // usuwa ewentualne ukośniki z końca URL
+// Wklej tu adres swojej darmowej bazy Firebase Realtime Database
+// (wyglada np. tak: https://ranking-alkoholi-default-rtdb.europe-west1.firebasedatabase.app)
+const FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
 // --- KONIEC KONFIGURACJI ---
 
 let items = [];
 let bannedNicks = [];
+let users = {};
+let currentUser = null;
 const ADMIN_NICK = 'KochamPiwo69';
+const ADMIN_PASSWORD = 'wielkibebzon2137';
+const RANKS = ['pocz\u0105tkuj\u0105cy', 'okazyjny', 'menel', 'koneser'];
+const RANK_META = {
+  'pocz\u0105tkuj\u0105cy': { label: 'pocz\u0105tkuj\u0105cy', color: '#8AA0BC' },
+  'okazyjny':      { label: 'okazyjny',      color: '#3F6CA8' },
+  'menel':         { label: 'menel',         color: '#B0752E' },
+  'koneser':       { label: 'koneser',       color: '#8A5FB0' },
+  'admin':         { label: 'admin',         color: '#B02E0C' },
+};
+function rankMeta(rank){ return RANK_META[rank] || RANK_META['pocz\u0105tkuj\u0105cy']; }
 
 const els = {
-  globalNick: document.getElementById('global-nick'),
   name: document.getElementById('in-name'),
   cena: document.getElementById('in-cena'),
   smak: document.getElementById('in-smak'),
-  kac: document.getElementById('in-kac'),
   moc: document.getElementById('in-moc'),
   rodzaj: document.getElementById('in-rodzaj'),
   profil: document.getElementById('in-profil'),
@@ -320,10 +381,66 @@ const els = {
   adminBox: document.getElementById('admin-box'),
   banNickInput: document.getElementById('ban-nick-input'),
   bannedList: document.getElementById('banned-list'),
+  rankList: document.getElementById('rank-list'),
+  loginForm: document.getElementById('login-form'),
+  loginNick: document.getElementById('login-nick'),
+  loginPass: document.getElementById('login-pass'),
+  loginSubmitBtn: document.getElementById('login-submit-btn'),
+  loginCancelBtn: document.getElementById('login-cancel-btn'),
+  registerForm: document.getElementById('register-form'),
+  registerNick: document.getElementById('register-nick'),
+  registerPass: document.getElementById('register-pass'),
+  registerSubmitBtn: document.getElementById('register-submit-btn'),
+  registerCancelBtn: document.getElementById('register-cancel-btn'),
+  loggedOutBar: document.getElementById('logged-out-bar'),
+  showLoginBtn: document.getElementById('show-login-btn'),
+  showRegisterBtn: document.getElementById('show-register-btn'),
+  loggedInBar: document.getElementById('logged-in-bar'),
+  loggedNick: document.getElementById('logged-nick'),
+  logoutBtn: document.getElementById('logout-btn'),
+  myProfileBtn: document.getElementById('my-profile-btn'),
+  profileBox: document.getElementById('profile-box'),
+  closeProfileBtn: document.getElementById('close-profile-btn'),
 };
 
-function isAdmin(){ return els.globalNick.value.trim() === ADMIN_NICK; }
+function isAdmin(){ return currentUser === ADMIN_NICK; }
 function isBanned(nick){ return bannedNicks.some(b => b.toLowerCase() === nick.toLowerCase()); }
+
+function ensureUserObj(nick){
+  const existing = users[nick];
+  if(typeof existing === 'string'){
+    users[nick] = { password: existing, avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
+  }else if(!existing || typeof existing !== 'object'){
+    users[nick] = { password: '', avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
+  }else{
+    if(existing.avatarUrl === undefined) existing.avatarUrl = '';
+    if(existing.rank === undefined) existing.rank = 'pocz\u0105tkuj\u0105cy';
+  }
+  return users[nick];
+}
+function getUserRank(nick){
+  if(nick === ADMIN_NICK) return 'admin';
+  const u = users[nick];
+  if(u && typeof u === 'object' && u.rank) return u.rank;
+  return 'pocz\u0105tkuj\u0105cy';
+}
+function colorFromNick(nick){
+  let hash = 0;
+  for(let i=0; i<(nick||'?').length; i++){ hash = (nick.charCodeAt(i) + ((hash<<5)-hash)); }
+  return `hsl(${Math.abs(hash) % 360}, 45%, 50%)`;
+}
+function avatarHtml(nick, size){
+  const safeNick = nick || '?';
+  const u = users[safeNick];
+  const url = (u && typeof u === 'object') ? u.avatarUrl : '';
+  const initial = escapeHtml(safeNick.charAt(0).toUpperCase());
+  const bg = colorFromNick(safeNick);
+  const fallbackStyle = `width:${size}px;height:${size}px;background:${bg};font-size:${Math.floor(size*0.55)}px;`;
+  if(url){
+    return `<img src="${escapeHtml(url)}" class="mini-avatar" style="width:${size}px;height:${size}px;" alt="" onerror="this.outerHTML='<span class=&quot;mini-avatar-fallback&quot; style=&quot;${fallbackStyle}&quot;>${initial}</span>';">`;
+  }
+  return `<span class="mini-avatar-fallback" style="${fallbackStyle}">${initial}</span>`;
+}
 
 function avg(voteMap){
   const vals = Object.values(voteMap || {});
@@ -334,55 +451,39 @@ function voteCount(voteMap){ return Object.keys(voteMap || {}).length; }
 
 function score(it){
   const smak = avg(it.smakVotes);
-  const kac = avg(it.kacVotes) || 1;
   const s = Math.pow(smak/100, 1);
   const m = Math.pow(it.moc/40, 1);
   const c = Math.pow(Math.max(it.cena,1)/100, 1);
-  const k = Math.pow(kac/5, 1);
-  return (s*m)/(c)*100;
+  return (s*m)/c*100;
 }
 
 async function loadData(){
   try{
-    const [itemsRes, bannedRes] = await Promise.all([
+    const [itemsRes, bannedRes, usersRes] = await Promise.all([
       fetch(`${FIREBASE_URL}/items.json`),
       fetch(`${FIREBASE_URL}/banned.json`),
+      fetch(`${FIREBASE_URL}/users.json`),
     ]);
-    if(!itemsRes.ok || !bannedRes.ok) throw new Error('Błąd odpowiedzi bazy danych');
-    
+    if(!itemsRes.ok || !bannedRes.ok || !usersRes.ok) throw new Error('blad odpowiedzi bazy');
     const itemsData = await itemsRes.json();
     const bannedData = await bannedRes.json();
-
-    // Bezpieczne parsowanie danych bez względu na to, czy Firebase zwraca Array, Object czy null
-    if (itemsData === null) {
-      items = [];
-    } else if (Array.isArray(itemsData)) {
-      items = itemsData.filter(Boolean);
-    } else if (typeof itemsData === 'object') {
-      items = Object.values(itemsData).filter(Boolean);
-    } else {
-      items = [];
+    const usersData = await usersRes.json();
+    if(itemsData !== null && !Array.isArray(itemsData)){
+      throw new Error('Nieprawidłowy format danych items');
     }
-
-    if (bannedData === null) {
-      bannedNicks = [];
-    } else if (Array.isArray(bannedData)) {
-      bannedNicks = bannedData.filter(Boolean);
-    } else if (typeof bannedData === 'object') {
-      bannedNicks = Object.values(bannedData).filter(Boolean);
-    } else {
-      bannedNicks = [];
+    if(bannedData !== null && !Array.isArray(bannedData)){
+      throw new Error('Nieprawidłowy format danych banned');
     }
-
+    items = Array.isArray(itemsData) ? itemsData : [];
+    bannedNicks = Array.isArray(bannedData) ? bannedData : [];
+    users = (usersData && typeof usersData === 'object' && !Array.isArray(usersData)) ? usersData : {};
     els.err.style.display = 'none';
   }catch(e){
-    console.error(e);
-    els.err.textContent = 'Nie można połączyć się z bazą danych forum. Sprawdź adres FIREBASE_URL oraz reguły dostępu (Rules) w Firebase.';
+    els.err.textContent = 'Nie mo\u017cna po\u0142\u0105czy\u0107 si\u0119 z baz\u0105 danych forum. Sprawd\u017a adres FIREBASE_URL w kodzie strony.';
     els.err.style.display = 'block';
   }
   renderAll();
 }
-
 async function saveItems(){
   try{
     const res = await fetch(`${FIREBASE_URL}/items.json`, {
@@ -390,13 +491,12 @@ async function saveItems(){
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(items)
     });
-    if(!res.ok) throw new Error('Błąd zapisu');
+    if(!res.ok) throw new Error('blad zapisu');
   }catch(e){
-    els.err.textContent = 'Nie udało się zapisać posta na serwerze forum. Spróbuj ponownie.';
+    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; posta na serwerze forum. Spr&oacute;bujcie ponownie.';
     els.err.style.display = 'block';
   }
 }
-
 async function saveBanned(){
   try{
     const res = await fetch(`${FIREBASE_URL}/banned.json`, {
@@ -404,9 +504,22 @@ async function saveBanned(){
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(bannedNicks)
     });
-    if(!res.ok) throw new Error('Błąd zapisu');
+    if(!res.ok) throw new Error('blad zapisu');
   }catch(e){
-    els.err.textContent = 'Nie udało się zapisać listy zbanowanych. Spróbuj ponownie.';
+    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; listy bana. Spr&oacute;bujcie ponownie.';
+    els.err.style.display = 'block';
+  }
+}
+async function saveUsers(){
+  try{
+    const res = await fetch(`${FIREBASE_URL}/users.json`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(users)
+    });
+    if(!res.ok) throw new Error('blad zapisu');
+  }catch(e){
+    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; konta na serwerze forum. Spr&oacute;bujcie ponownie.';
     els.err.style.display = 'block';
   }
 }
@@ -416,7 +529,6 @@ function escapeHtml(s){
   d.textContent = s == null ? '' : s;
   return d.innerHTML;
 }
-
 function formatDate(ts){
   if(!ts) return '';
   const d = new Date(ts);
@@ -439,7 +551,6 @@ function fillSelect(select, values, allLabel){
     values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
   if(values.includes(current)) select.value = current;
 }
-
 function populateFilterOptions(){
   const rodzaje = Array.from(new Set(items.map(i=>i.rodzaj).filter(Boolean))).sort();
   const profile = Array.from(new Set(items.map(i=>(i.profil||'').trim()).filter(Boolean))).sort();
@@ -456,7 +567,6 @@ function renderAdminPanel(){
         ${escapeHtml(n)} <button class="btn btn-small unban-btn" data-nick="${escapeHtml(n)}" style="padding:1px 5px;">Odbanuj</button>
       </span>`).join('')
     : '<span style="font-size:10px; color:#8AA0BC;">Nikt nie jest zbanowany.</span>';
-  
   els.bannedList.querySelectorAll('.unban-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       bannedNicks = bannedNicks.filter(n => n !== btn.dataset.nick);
@@ -464,46 +574,122 @@ function renderAdminPanel(){
       renderAdminPanel();
     });
   });
+  renderRankManager();
 }
+
+function renderRankManager(){
+  const nicks = Object.keys(users).sort((a,b)=>a.localeCompare(b));
+  if(nicks.length === 0){
+    els.rankList.innerHTML = '<span style="font-size:10px; color:#8AA0BC;">Nikt jeszcze nie za&#322;o&#380;y&#322; konta.</span>';
+    return;
+  }
+  els.rankList.innerHTML = nicks.map(n=>{
+    const account = ensureUserObj(n);
+    return `<div style="display:flex; gap:8px; align-items:center; margin:4px 0; font-size:11px;">
+      <span style="width:170px; display:inline-flex; align-items:center; gap:6px;">${avatarHtml(n,16)} ${escapeHtml(n)}</span>
+      <select class="rank-select" data-nick="${escapeHtml(n)}" style="width:150px;">
+        ${RANKS.map(r=>`<option value="${r}" ${account.rank===r?'selected':''}>${rankMeta(r).label}</option>`).join('')}
+      </select>
+      <button class="btn btn-small save-rank-btn" data-nick="${escapeHtml(n)}">Zapisz</button>
+    </div>`;
+  }).join('');
+  els.rankList.querySelectorAll('.save-rank-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const nick = btn.dataset.nick;
+      const sel = els.rankList.querySelector(`.rank-select[data-nick="${nick}"]`);
+      const account = ensureUserObj(nick);
+      account.rank = sel.value;
+      await saveUsers();
+      renderRankManager();
+      renderList();
+    });
+  });
+}
+
+function showProfile(nick){
+  if(!nick) return;
+  const meta = rankMeta(getUserRank(nick));
+  document.getElementById('profile-nick-name').textContent = nick;
+  document.getElementById('profile-avatar-wrap').innerHTML = avatarHtml(nick, 72);
+  document.getElementById('profile-rank-wrap').innerHTML = `<span class="rank-tag" style="background:${meta.color};">${escapeHtml(meta.label)}</span>`;
+
+  const authored = items.filter(it => it.nick === nick);
+  const votesCast = items.reduce((acc,it)=> acc + (it.smakVotes && Object.prototype.hasOwnProperty.call(it.smakVotes, nick) ? 1 : 0), 0);
+  const commentsCount = items.reduce((acc,it)=> acc + (it.comments||[]).filter(c=>c.nick===nick).length, 0);
+  document.getElementById('profile-stats').innerHTML =
+    `Dodanych trunk&oacute;w: <b>${authored.length}</b> &middot; Oddanych g&#322;os&oacute;w: <b>${votesCast}</b> &middot; Komentarzy: <b>${commentsCount}</b>`;
+
+  const editWrap = document.getElementById('profile-edit-wrap');
+  if(currentUser === nick && nick !== ADMIN_NICK){
+    const account = ensureUserObj(nick);
+    editWrap.innerHTML = `
+      <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+        <input type="text" id="avatar-url-input" placeholder="link do zdj&#281;cia profilowego" value="${escapeHtml(account.avatarUrl||'')}" style="width:220px;">
+        <button class="btn btn-small" id="save-avatar-btn">Zapisz zdj&#281;cie profilowe</button>
+      </div>`;
+    document.getElementById('save-avatar-btn').addEventListener('click', async ()=>{
+      const url = document.getElementById('avatar-url-input').value.trim();
+      const acc = ensureUserObj(nick);
+      acc.avatarUrl = url;
+      await saveUsers();
+      showProfile(nick);
+      renderList();
+    });
+  }else{
+    editWrap.innerHTML = '';
+  }
+
+  const top = authored.slice().sort((a,b)=>score(b)-score(a)).slice(0,10);
+  const itemsList = document.getElementById('profile-items');
+  itemsList.innerHTML = top.length
+    ? top.map((it,i)=>`<div style="padding:6px 0; border-bottom:1px solid #D3E1F2; font-size:11px;">
+        <b>#${i+1}</b> ${escapeHtml(it.name)} <span style="color:#5A7EA0;">[${escapeHtml(it.rodzaj||'')}]</span>
+        &middot; WSK: <b style="color:#B02E0C;">${score(it).toFixed(1)}</b>
+      </div>`).join('')
+    : '<p style="font-size:11px; color:#8AA0BC;">Ten u&#380;ytkownik nie doda&#322; jeszcze &#380;adnego trunku.</p>';
+
+  els.profileBox.style.display = 'block';
+  els.profileBox.scrollIntoView({behavior:'smooth', block:'start'});
+}
+els.closeProfileBtn.addEventListener('click', ()=>{ els.profileBox.style.display = 'none'; });
+els.myProfileBtn.addEventListener('click', ()=>{ if(currentUser) showProfile(currentUser); });
 
 function renderAll(){
   renderAdminPanel();
   populateFilterOptions();
   renderList();
-  renderBarChart();
-  renderScatterChart();
 }
 
 function renderList(){
   const filtered = getFilteredItems();
-  els.count.textContent = `[${filtered.length}${filtered.length !== items.length ? ' z '+items.length : ''} postów]`;
+  els.count.textContent = `[${filtered.length}${filtered.length !== items.length ? ' z '+items.length : ''} post\u00f3w]`;
   if(items.length === 0){
-    els.list.innerHTML = '<tr><td class="empty">Wątek jest pusty. Dołóżcie pierwszy post powyżej.</td></tr>';
+    els.list.innerHTML = '<tr><td class="empty">W&#261;tek jest pusty. Do&#322;&oacute;&#380;cie pierwszy post powy&#380;ej.</td></tr>';
     return;
   }
   if(filtered.length === 0){
-    els.list.innerHTML = '<tr><td class="empty">Żaden trunek nie pasuje do wybranych filtrów.</td></tr>';
+    els.list.innerHTML = '<tr><td class="empty">&#379;aden trunek nie pasuje do wybranych filtr&oacute;w.</td></tr>';
     return;
   }
   const scored = filtered.map(it=>({ it, sc: score(it) })).sort((a,b)=>b.sc-a.sc);
   const admin = isAdmin();
   els.list.innerHTML = scored.map(({it,sc}, i)=>{
-    const smakAvg = avg(it.smakVotes), kacAvg = avg(it.kacVotes);
-    const smakN = voteCount(it.smakVotes), kacN = voteCount(it.kacVotes);
+    const smakAvg = avg(it.smakVotes);
+    const smakN = voteCount(it.smakVotes);
     const photoHtml = it.photoUrl
-      ? `<img src="${escapeHtml(it.photoUrl)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="avatar-fallback" style="display:none; height:80px; align-items:center;">brak<br>zdjęcia</div>`
-      : `<div class="avatar-fallback" style="height:80px; display:flex; align-items:center; justify-content:center;">brak<br>zdjęcia</div>`;
+      ? `<img src="${escapeHtml(it.photoUrl)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="avatar-fallback" style="display:none; height:80px; align-items:center;">brak<br>zdj&#281;cia</div>`
+      : `<div class="avatar-fallback" style="height:80px; display:flex; align-items:center; justify-content:center;">brak<br>zdj&#281;cia</div>`;
     const comments = it.comments || [];
     const commentsHtml = comments.length
       ? comments.map((c,cidx) => `<div class="comment">
-          <span class="c-head">${escapeHtml(c.nick)}<span class="c-date">${formatDate(c.ts)}</span>${admin ? ` <button class="btn btn-small del-comment-btn" data-id="${it.id}" data-idx="${cidx}" style="margin-left:6px; padding:1px 5px;">Usuń</button>` : ''}</span>
+          <span class="c-head">${avatarHtml(c.nick,14)} <span class="nick-link" data-profile-nick="${escapeHtml(c.nick)}"><span class="nick-text">${escapeHtml(c.nick)}</span></span><span class="c-date">${formatDate(c.ts)}</span>${admin ? ` <button class="btn btn-small del-comment-btn" data-id="${it.id}" data-idx="${cidx}" style="margin-left:6px; padding:1px 5px;">Usu&#324;</button>` : ''}</span>
           <div class="c-text">${escapeHtml(c.text)}</div>
         </div>`).join('')
-      : `<div class="no-comments">Brak komentarzy &mdash; bądź pierwszy.</div>`;
+      : `<div class="no-comments">Brak komentarzy \u2014 b&#261;d&#378; pierwszy.</div>`;
     const adminButtons = admin
       ? `<span style="display:inline-flex; gap:4px;">
           <button class="btn btn-small edit-btn" data-id="${it.id}">Edytuj</button>
-          <button class="btn btn-small del-item-btn" data-id="${it.id}">Usuń</button>
+          <button class="btn btn-small del-item-btn" data-id="${it.id}">Usu&#324;</button>
         </span>`
       : '';
     const editForm = admin ? `
@@ -514,19 +700,19 @@ function renderList(){
             <td class="lbl">Rodzaj</td>
             <td>
               <select class="edit-rodzaj">
-                ${['wódka','piwo','wino','rum','whisky','gin','likier','cydr','brandy/koniak','inne'].map(r=>`<option value="${r}" ${it.rodzaj===r?'selected':''}>${r}</option>`).join('')}
+                ${['w\u00f3dka','piwo','wino','rum','whisky','gin','likier','cydr','brandy/koniak','inne'].map(r=>`<option value="${r}" ${it.rodzaj===r?'selected':''}>${r}</option>`).join('')}
               </select>
             </td>
           </tr>
           <tr>
-            <td class="lbl">Cena (zł)</td><td><input type="number" class="edit-cena" value="${it.cena}"></td>
+            <td class="lbl">Cena (z&#322;)</td><td><input type="number" class="edit-cena" value="${it.cena}"></td>
             <td class="lbl">Moc (%)</td><td><input type="number" class="edit-moc" value="${it.moc}"></td>
           </tr>
           <tr>
             <td class="lbl">Profil smaku</td><td colspan="3"><input type="text" class="edit-profil" value="${escapeHtml(it.profil||'')}"></td>
           </tr>
           <tr>
-            <td class="lbl">Zdjęcie (URL)</td><td colspan="3"><input type="text" class="edit-photo" value="${escapeHtml(it.photoUrl||'')}"></td>
+            <td class="lbl">Zdj&#281;cie (URL)</td><td colspan="3"><input type="text" class="edit-photo" value="${escapeHtml(it.photoUrl||'')}"></td>
           </tr>
         </table>
         <button class="btn btn-small save-edit-btn" data-id="${it.id}">Zapisz zmiany</button>
@@ -535,7 +721,8 @@ function renderList(){
     return `<tr>
       <td class="avatar-cell">
         <div class="avatar-box">${photoHtml}</div>
-        <div class="nick">${escapeHtml(it.nick || 'anonim')}</div>
+        <div class="nick nick-link" data-profile-nick="${escapeHtml(it.nick||'')}">${avatarHtml(it.nick,18)} <span class="nick-text">${escapeHtml(it.nick || 'anonim')}</span></div>
+        <div><span class="rank-tag" style="background:${rankMeta(getUserRank(it.nick)).color};">${escapeHtml(rankMeta(getUserRank(it.nick)).label)}</span></div>
         <div class="rank-badge">#${i+1}</div>
       </td>
       <td>
@@ -547,18 +734,16 @@ function renderList(){
           </span>
         </div>
         <div class="meta">
-          <span class="stat-mini">Cena: <b>${it.cena} zł</b></span>
+          <span class="stat-mini">Cena: <b>${it.cena} z&#322;</b></span>
           <span class="stat-mini">Moc: <b>${it.moc}%</b></span>
-          <span class="stat-mini">Śr. smak: <b>${smakAvg.toFixed(0)}/100</b> (${smakN} gł.)</span>
-          <span class="stat-mini">Śr. kac: <b>${kacAvg.toFixed(1)}/5</b> (${kacN} gł.)</span>
+          <span class="stat-mini">&#346;r. smak: <b>${smakAvg.toFixed(0)}/100</b> (${smakN} g&#322;.)</span>
         </div>
         ${it.profil ? `<div class="quote">Profil smaku: ${escapeHtml(it.profil)}</div>` : ''}
         ${editForm}
         <div class="vote-box">
-          <span><b>Zagłosuj:</b></span>
+          <span><b>Zag&#322;osuj na smak:</b></span>
           <span class="fld">smak <input type="number" min="1" max="100" step="1" class="vote-smak" data-id="${it.id}" placeholder="1-100"></span>
-          <span class="fld">kac <input type="number" min="1" max="5" step="1" class="vote-kac" data-id="${it.id}" placeholder="1-5"></span>
-          <button class="btn btn-small vote-btn" data-id="${it.id}">Wyślij głos</button>
+          <button class="btn btn-small vote-btn" data-id="${it.id}">Wy&#347;lij g&#322;os</button>
         </div>
         <div class="comments">
           ${commentsHtml}
@@ -571,40 +756,36 @@ function renderList(){
     </tr>`;
   }).join('');
 
+  els.list.querySelectorAll('.nick-link').forEach(el=>{
+    el.addEventListener('click', ()=> showProfile(el.dataset.profileNick));
+  });
+
   els.list.querySelectorAll('.vote-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const id = btn.dataset.id;
-      const nick = els.globalNick.value.trim();
+      const nick = currentUser;
       const row = btn.closest('tr');
       const smakVal = parseFloat(row.querySelector('.vote-smak').value);
-      const kacVal = parseFloat(row.querySelector('.vote-kac').value);
       els.err.style.display = 'none';
       if(!nick){
-        els.err.textContent = 'Wpisz najpierw swój nick na górze strony, żeby zagłosować.';
+        els.err.textContent = 'Zaloguj si&#281; najpierw, &#380;eby zag&#322;osowa&#263;.';
         els.err.style.display = 'block';
-        els.globalNick.focus();
         return;
       }
       if(isBanned(nick) && !isAdmin()){
-        els.err.textContent = 'Ten nick został zbanowany przez administratora forum.';
+        els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
         els.err.style.display = 'block';
         return;
       }
-      if(isNaN(smakVal) && isNaN(kacVal)){
-        els.err.textContent = 'Podaj ocenę smaku i/lub kaca, zanim wyślesz głos.';
+      if(isNaN(smakVal) || smakVal<1 || smakVal>100){
+        els.err.textContent = 'Podaj ocen&#281; smaku w zakresie 1-100, zanim wy&#347;lesz g&#322;os.';
         els.err.style.display = 'block';
         return;
       }
       const target = items.find(x=>x.id === id);
       if(!target) return;
-      if(!isNaN(smakVal) && smakVal>=1 && smakVal<=100){
-        target.smakVotes = target.smakVotes || {};
-        target.smakVotes[nick] = smakVal;
-      }
-      if(!isNaN(kacVal) && kacVal>=1 && kacVal<=5){
-        target.kacVotes = target.kacVotes || {};
-        target.kacVotes[nick] = kacVal;
-      }
+      target.smakVotes = target.smakVotes || {};
+      target.smakVotes[nick] = smakVal;
       await saveItems();
       renderAll();
     });
@@ -613,24 +794,23 @@ function renderList(){
   els.list.querySelectorAll('.comment-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const id = btn.dataset.id;
-      const nick = els.globalNick.value.trim();
+      const nick = currentUser;
       const row = btn.closest('tr');
       const textarea = row.querySelector('.comment-input');
       const text = textarea.value.trim();
       els.err.style.display = 'none';
       if(!nick){
-        els.err.textContent = 'Wpisz najpierw swój nick na górze strony, żeby dodać komentarz.';
+        els.err.textContent = 'Zaloguj si&#281; najpierw, &#380;eby doda&#263; komentarz.';
         els.err.style.display = 'block';
-        els.globalNick.focus();
         return;
       }
       if(isBanned(nick) && !isAdmin()){
-        els.err.textContent = 'Ten nick został zbanowany przez administratora forum.';
+        els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
         els.err.style.display = 'block';
         return;
       }
       if(!text){
-        els.err.textContent = 'Wpisz treść komentarza, zanim go wyślesz.';
+        els.err.textContent = 'Wpisz tre&#347;&#263; komentarza, zanim go wy&#347;lesz.';
         els.err.style.display = 'block';
         return;
       }
@@ -650,14 +830,12 @@ function renderList(){
       if(form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
     });
   });
-
   els.list.querySelectorAll('.cancel-edit-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const form = els.list.querySelector(`.edit-form[data-id="${btn.dataset.id}"]`);
       if(form) form.style.display = 'none';
     });
   });
-
   els.list.querySelectorAll('.save-edit-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const id = btn.dataset.id;
@@ -671,7 +849,7 @@ function renderList(){
       const profil = form.querySelector('.edit-profil').value.trim();
       const photoUrl = form.querySelector('.edit-photo').value.trim();
       if(!name || isNaN(cena) || cena<=0 || isNaN(moc) || moc<=0){
-        els.err.textContent = 'Popraw dane w formularzu edycji - nazwa, cena i moc muszą być poprawne.';
+        els.err.textContent = 'Popraw dane w formularzu edycji \u2014 nazwa, cena i moc musz&#261; by&#263; poprawne.';
         els.err.style.display = 'block';
         return;
       }
@@ -680,19 +858,17 @@ function renderList(){
       renderAll();
     });
   });
-
   els.list.querySelectorAll('.del-item-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      if(!confirm('Na pewno usunąć ten trunek z rankingu?')) return;
+      if(!confirm('Na pewno usun&#261;&#263; ten trunek z rankingu?')) return;
       items = items.filter(x => x.id !== btn.dataset.id);
       await saveItems();
       renderAll();
     });
   });
-
   els.list.querySelectorAll('.del-comment-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      if(!confirm('Na pewno usunąć ten komentarz?')) return;
+      if(!confirm('Na pewno usun&#261;&#263; ten komentarz?')) return;
       const target = items.find(x=>x.id === btn.dataset.id);
       if(!target || !target.comments) return;
       target.comments.splice(parseInt(btn.dataset.idx), 1);
@@ -702,151 +878,145 @@ function renderList(){
   });
 }
 
-function setupCanvas(canvas){
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  const h = canvas.height || 240;
-  canvas.width = rect.width * dpr;
-  canvas.height = h * dpr;
-  canvas.style.height = h + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  return { ctx, w: rect.width, h };
+function updateLoginUI(){
+  els.loginForm.style.display = 'none';
+  els.registerForm.style.display = 'none';
+  if(currentUser){
+    els.loggedOutBar.style.display = 'none';
+    els.loggedInBar.style.display = 'block';
+    els.loggedNick.textContent = currentUser;
+  }else{
+    els.loggedOutBar.style.display = 'flex';
+    els.loggedInBar.style.display = 'none';
+  }
 }
 
-function roundRect(ctx,x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.arcTo(x+w,y,x+w,y+h,r);
-  ctx.arcTo(x+w,y+h,x,y+h,r);
-  ctx.arcTo(x,y+h,x,y,r);
-  ctx.arcTo(x,y,x+w,y,r);
-  ctx.closePath();
-  ctx.fill();
-}
+els.showLoginBtn.addEventListener('click', ()=>{
+  els.loggedOutBar.style.display = 'none';
+  els.registerForm.style.display = 'none';
+  els.loginForm.style.display = 'block';
+});
+els.showRegisterBtn.addEventListener('click', ()=>{
+  els.loggedOutBar.style.display = 'none';
+  els.loginForm.style.display = 'none';
+  els.registerForm.style.display = 'block';
+});
+els.loginCancelBtn.addEventListener('click', ()=>{
+  els.loginNick.value = ''; els.loginPass.value = '';
+  updateLoginUI();
+});
+els.registerCancelBtn.addEventListener('click', ()=>{
+  els.registerNick.value = ''; els.registerPass.value = '';
+  updateLoginUI();
+});
 
-function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
-
-function renderBarChart(){
-  const canvas = document.getElementById('bar-chart');
-  const { ctx, w, h } = setupCanvas(canvas);
-  ctx.clearRect(0,0,w,h);
-  const filtered = getFilteredItems();
-  if(filtered.length === 0){
-    ctx.fillStyle = '#5A7EA0';
-    ctx.font = '11px Verdana';
-    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wyników dla filtrów.', 8, h/2);
+els.loginSubmitBtn.addEventListener('click', async ()=>{
+  const nick = els.loginNick.value.trim();
+  const pass = els.loginPass.value;
+  els.err.style.display = 'none';
+  if(!nick || !pass){
+    els.err.textContent = 'Podaj nick i has&#322;o, &#380;eby si&#281; zalogowa&#263;.';
+    els.err.style.display = 'block';
     return;
   }
-  const scored = filtered.map(it=>({name:it.name, sc:score(it)})).sort((a,b)=>b.sc-a.sc).slice(0,10);
-  const max = Math.max(...scored.map(x=>x.sc), 1);
-  const rowH = h / scored.length;
-  const labelW = 110;
-  ctx.font = '11px Verdana';
-  scored.forEach((it, i)=>{
-    const y = i * rowH;
-    const barMaxW = w - labelW - 50;
-    const barW = Math.max(2, (it.sc/max) * barMaxW);
-    ctx.fillStyle = '#3A5A80';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(truncate(it.name, 14), 0, y + rowH/2);
-    ctx.fillStyle = '#3F6CA8';
-    ctx.strokeStyle = '#17385E';
-    const barH = Math.max(6, rowH*0.5);
-    roundRect(ctx, labelW, y + (rowH-barH)/2, barW, barH, 2);
-    ctx.strokeRect(labelW, y + (rowH-barH)/2, barW, barH);
-    ctx.fillStyle = '#17385E';
-    ctx.fillText(it.sc.toFixed(1), labelW + barW + 8, y + rowH/2);
-  });
-}
-
-let scatterPoints = [];
-function renderScatterChart(){
-  const canvas = document.getElementById('scatter-chart');
-  const { ctx, w, h } = setupCanvas(canvas);
-  ctx.clearRect(0,0,w,h);
-  scatterPoints = [];
-  const filtered = getFilteredItems();
-  if(filtered.length === 0){
-    ctx.fillStyle = '#5A7EA0';
-    ctx.font = '11px Verdana';
-    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wyników dla filtrów.', 8, h/2);
+  if(nick === ADMIN_NICK){
+    if(pass !== ADMIN_PASSWORD){
+      els.err.textContent = 'Nieprawid&#322;owy nick lub has&#322;o.';
+      els.err.style.display = 'block';
+      return;
+    }
+    currentUser = ADMIN_NICK;
+    els.loginNick.value = '';
+    els.loginPass.value = '';
+    updateLoginUI();
+    renderAll();
     return;
   }
-  const padL = 40, padB = 30, padT = 10, padR = 15;
-  const plotW = w - padL - padR;
-  const plotH = h - padT - padB;
-  const maxCena = Math.max(...filtered.map(i=>i.cena), 10) * 1.1;
+  if(isBanned(nick)){
+    els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum i nie mo&#380;e si&#281; zalogowa&#263;.';
+    els.err.style.display = 'block';
+    return;
+  }
+  if(!Object.prototype.hasOwnProperty.call(users, nick)){
+    els.err.textContent = 'Nieprawid&#322;owy nick lub has&#322;o.';
+    els.err.style.display = 'block';
+    return;
+  }
+  const account = ensureUserObj(nick);
+  if(account.password !== pass){
+    els.err.textContent = 'Nieprawid&#322;owy nick lub has&#322;o.';
+    els.err.style.display = 'block';
+    return;
+  }
+  currentUser = nick;
+  els.loginNick.value = '';
+  els.loginPass.value = '';
+  updateLoginUI();
+  renderAll();
+});
 
-  ctx.strokeStyle = '#B7CBE6';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT+plotH); ctx.lineTo(padL+plotW, padT+plotH);
-  ctx.stroke();
-  ctx.fillStyle = '#5A7EA0';
-  ctx.font = '10px Verdana';
-  ctx.fillText('0', padL-6, padT+plotH+14);
-  ctx.fillText(Math.round(maxCena)+' zł', padL+plotW-30, padT+plotH+14);
-  ctx.save();
-  ctx.translate(10, padT+plotH/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText('smak →', 0, 0);
-  ctx.restore();
-  ctx.fillText('cena →', padL+plotW/2-15, padT+plotH+14);
+els.registerSubmitBtn.addEventListener('click', async ()=>{
+  const nick = els.registerNick.value.trim();
+  const pass = els.registerPass.value;
+  els.err.style.display = 'none';
+  if(!nick || !pass){
+    els.err.textContent = 'Podaj nick i has&#322;o, &#380;eby za&#322;o&#380;y&#263; konto.';
+    els.err.style.display = 'block';
+    return;
+  }
+  if(nick === ADMIN_NICK){
+    els.err.textContent = 'Ten nick jest zarezerwowany.';
+    els.err.style.display = 'block';
+    return;
+  }
+  if(isBanned(nick)){
+    els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
+    els.err.style.display = 'block';
+    return;
+  }
+  if(Object.prototype.hasOwnProperty.call(users, nick)){
+    els.err.textContent = 'Ten nick jest ju&#380; zaj&#281;ty. Zaloguj si&#281; zamiast zak&#322;ada&#263; nowe konto.';
+    els.err.style.display = 'block';
+    return;
+  }
+  users[nick] = { password: pass, avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
+  await saveUsers();
+  currentUser = nick;
+  els.registerNick.value = '';
+  els.registerPass.value = '';
+  updateLoginUI();
+  renderAll();
+});
 
-  filtered.forEach(it=>{
-    const smakAvg = avg(it.smakVotes), kacAvg = avg(it.kacVotes) || 1;
-    const x = padL + (it.cena/maxCena) * plotW;
-    const y = padT + plotH - (smakAvg/100) * plotH;
-    const r = 4 + (it.moc/96) * 14;
-    const kacT = (kacAvg-1)/4;
-    const color = mixColor('#5B8A4A', '#B02E0C', kacT);
-    ctx.fillStyle = color;
-    ctx.strokeStyle = '#17385E';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI*2);
-    ctx.fill();
-    ctx.stroke();
-    scatterPoints.push({x, y, r, it});
-  });
-}
-
-function mixColor(c1, c2, t){
-  const p1 = hexToRgb(c1), p2 = hexToRgb(c2);
-  const r = Math.round(p1.r + (p2.r-p1.r)*t);
-  const g = Math.round(p1.g + (p2.g-p1.g)*t);
-  const b = Math.round(p1.b + (p2.b-p1.b)*t);
-  return `rgb(${r},${g},${b})`;
-}
-
-function hexToRgb(hex){
-  const v = parseInt(hex.slice(1),16);
-  return { r:(v>>16)&255, g:(v>>8)&255, b:v&255 };
-}
-
-const scatterCanvas = document.getElementById('scatter-chart');
-scatterCanvas.addEventListener('mousemove', (e)=>{
-  const rect = scatterCanvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  const hit = scatterPoints.find(p => Math.hypot(p.x-mx, p.y-my) <= p.r+2);
-  scatterCanvas.title = hit ? `${hit.it.name} — ${hit.it.cena} zł, moc ${hit.it.moc}%` : '';
+els.logoutBtn.addEventListener('click', ()=>{
+  currentUser = null;
+  updateLoginUI();
+  renderAll();
 });
 
 document.getElementById('add-btn').addEventListener('click', async ()=>{
-  const nick = els.globalNick.value.trim();
+  const nick = currentUser;
   const name = els.name.value.trim();
   const cena = parseFloat(els.cena.value);
   const smak = parseFloat(els.smak.value);
-  const kac = parseFloat(els.kac.value);
   const moc = parseFloat(els.moc.value);
   const rodzaj = els.rodzaj.value;
   const profil = els.profil.value.trim();
   const photoUrl = els.photo.value.trim();
 
-  if(!nick || !name || isNaN(cena) || isNaN(smak) || isNaN(kac) || isNaN(moc) ||
-     cena<=0 || smak<1 || smak>100 || kac<1 || kac>5 || moc<=0 || !rodzaj){
-    els.err.textContent = 'Uzupełnij nick, nazwę, rodzaj i wszystkie oceny poprawnymi wartościami.';
+  if(!nick){
+    els.err.textContent = 'Zaloguj si&#281; najpierw, &#380;eby doda&#263; trunek.';
+    els.err.style.display = 'block';
+    return;
+  }
+  if(isBanned(nick) && !isAdmin()){
+    els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
+    els.err.style.display = 'block';
+    return;
+  }
+  if(!name || isNaN(cena) || isNaN(smak) || isNaN(moc) ||
+     cena<=0 || smak<1 || smak>100 || moc<=0 || !rodzaj){
+    els.err.textContent = 'Uzupe&#322;nij nazw&#281;, rodzaj i wszystkie oceny poprawnymi warto&#347;ciami.';
     els.err.style.display = 'block';
     return;
   }
@@ -855,29 +1025,13 @@ document.getElementById('add-btn').addEventListener('click', async ()=>{
   items.push({
     id, nick, name, cena, moc, rodzaj, profil, photoUrl,
     smakVotes: { [nick]: smak },
-    kacVotes: { [nick]: kac },
     comments: [],
   });
-  els.name.value=''; els.cena.value=''; els.smak.value=''; els.kac.value='';
+  els.name.value=''; els.cena.value=''; els.smak.value='';
   els.moc.value=''; els.rodzaj.value=''; els.profil.value=''; els.photo.value='';
   await saveItems();
   renderAll();
 });
-
-// Zdarzenie dla banowania
-document.getElementById('ban-btn').addEventListener('click', async () => {
-  const nickToBan = els.banNickInput.value.trim();
-  if(!nickToBan) return;
-  if(!bannedNicks.some(b => b.toLowerCase() === nickToBan.toLowerCase())){
-    bannedNicks.push(nickToBan);
-    els.banNickInput.value = '';
-    await saveBanned();
-    renderAll();
-  }
-});
-
-// Zdarzenie wpisywania nicku (od razu włącza panel admina po wpisaniu 'KochamPiwo69')
-els.globalNick.addEventListener('input', renderAdminPanel);
 
 els.filterRodzaj.addEventListener('change', renderAll);
 els.filterProfil.addEventListener('change', renderAll);
@@ -885,7 +1039,7 @@ document.getElementById('refresh-btn').addEventListener('click', loadData);
 window.addEventListener('resize', renderAll);
 window.addEventListener('focus', loadData);
 
-// Pierwsze ładowanie i cykliczne odświeżanie co 20 sekund
+updateLoginUI();
 loadData();
 setInterval(loadData, 20000);
 </script>
