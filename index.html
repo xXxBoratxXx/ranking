@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ranking Trunk&oacute;w - Forum Konesera</title>
+<title>Ranking Trunków - Forum Konesera</title>
 <style>
   *{ box-sizing:border-box; }
   body{
@@ -169,27 +169,27 @@
 
   <div class="banner">
     <h1>&#9733; FORUM KONESERA &#9733;</h1>
-    <p>Forum Konesera - opracowujemy wsp&oacute;lny wsp&oacute;&#322;czynnik op&#322;acalno&#347;ci od 2026 roku</p>
+    <p>Forum Konesera - opracowujemy wspólny współczynnik opłacalności od 2026 roku</p>
   </div>
-  <div class="navbar">Jeste&#347; tutaj: <b>Strona g&#322;&oacute;wna</b> &raquo; <b>Ranking</b> &raquo; Dodaj trunek i zag&#322;osuj</div>
+  <div class="navbar">Jesteś tutaj: <b>Strona główna</b> &raquo; <b>Ranking</b> &raquo; Dodaj trunek i zagłosuj</div>
 
   <div class="nickbar">
-    <span><b>Tw&oacute;j nick:</b></span>
+    <span><b>Twój nick:</b></span>
     <input type="text" id="global-nick" placeholder="np. Piwosz_69" maxlength="24">
-    <span style="color:#8A7A2E;">u&#380;ywany do dodawania post&oacute;w i g&#322;osowania (nie zapisuje si&#281; po od&#347;wie&#380;eniu strony)</span>
+    <span style="color:#8A7A2E;">używany do dodawania postów i głosowania (nie zapisuje się po odświeżeniu strony)</span>
   </div>
 
   <div class="box" id="admin-box" style="display:none;">
     <div class="box-head">&raquo; Panel admina</div>
     <div class="box-body">
       <fieldset>
-        <legend>Banowanie u&#380;ytkownik&oacute;w</legend>
+        <legend>Banowanie użytkowników</legend>
         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
           <input type="text" id="ban-nick-input" placeholder="nick do zbanowania" style="width:200px;">
           <button class="btn btn-small" id="ban-btn">Zbanuj</button>
         </div>
         <div id="banned-list" style="margin-top:8px;"></div>
-        <p style="font-size:10px; color:#8A7A2E; margin:8px 0 0;">Uwaga: to zwyk&#322;e sprawdzenie nicku w kodzie strony, kt&oacute;ry jest publicznie widoczny w repozytorium na GitHubie \u2014 to nie jest prawdziwe zabezpieczenie przed kim&#347;, kto zna si&#281; na rzeczy.</p>
+        <p style="font-size:10px; color:#8A7A2E; margin:8px 0 0;">Uwaga: to zwykłe sprawdzenie nicku w kodzie strony, który jest publicznie widoczny w repozytorium na GitHubie &mdash; to nie jest prawdziwe zabezpieczenie przed kimś, kto zna się na rzeczy.</p>
       </fieldset>
     </div>
   </div>
@@ -202,12 +202,12 @@
         <table class="form-table">
           <tr>
             <td class="lbl">Nazwa trunku</td>
-            <td><input type="text" id="in-name" placeholder="np. &#379;ubr&oacute;wka"></td>
+            <td><input type="text" id="in-name" placeholder="np. Żubrówka"></td>
             <td class="lbl">Rodzaj</td>
             <td>
               <select id="in-rodzaj">
                 <option value="">wybierz...</option>
-                <option value="w&oacute;dka">w&oacute;dka</option>
+                <option value="wódka">wódka</option>
                 <option value="piwo">piwo</option>
                 <option value="wino">wino</option>
                 <option value="rum">rum</option>
@@ -221,7 +221,7 @@
             </td>
           </tr>
           <tr>
-            <td class="lbl">Cena (z&#322;)</td>
+            <td class="lbl">Cena (zł)</td>
             <td><input type="number" id="in-cena" min="0" step="1" placeholder="45"></td>
             <td class="lbl">Moc (%)</td>
             <td><input type="number" id="in-moc" min="1" max="96" step="1" placeholder="40"></td>
@@ -231,13 +231,13 @@
             <td colspan="3"><input type="text" id="in-profil" placeholder="np. owocowy, czysta, korzenny"></td>
           </tr>
           <tr>
-            <td class="lbl">Zdj&#281;cie (link URL)</td>
+            <td class="lbl">Zdjęcie (link URL)</td>
             <td colspan="3"><input type="text" id="in-photo" placeholder="https://.../butelka.jpg (opcjonalnie)"></td>
           </tr>
         </table>
       </fieldset>
       <fieldset>
-        <legend>Twoja pierwsza ocena (mo&#380;na j&#261; potem zmieni&#263; g&#322;osem obok wpisu)</legend>
+        <legend>Twoja pierwsza ocena (można ją potem zmienić głosem obok wpisu)</legend>
         <table class="form-table">
           <tr>
             <td class="lbl">Smak (1-100)</td>
@@ -253,7 +253,7 @@
   </div>
 
   <div class="box">
-    <div class="box-head">&raquo; Ranking trunk&oacute;w <span id="item-count" style="font-weight:normal; float:right;"></span></div>
+    <div class="box-head">&raquo; Ranking trunków <span id="item-count" style="font-weight:normal; float:right;"></span></div>
     <div class="filters">
       <div>
         <label for="filter-rodzaj">Filtruj rodzaj:</label>
@@ -264,7 +264,7 @@
         <select id="filter-profil"><option value="">wszystkie profile</option></select>
       </div>
       <div style="align-self:flex-end;">
-        <button class="btn btn-small" id="refresh-btn">Od&#347;wie&#380; w&#261;tek</button>
+        <button class="btn btn-small" id="refresh-btn">Odśwież wątek</button>
       </div>
     </div>
     <div class="box-body" style="padding:0;">
@@ -273,30 +273,29 @@
   </div>
 
   <div class="box">
-    <div class="box-head">&raquo; Wykres op&#322;acalno&#347;ci - ranking wg WSK</div>
+    <div class="box-head">&raquo; Wykres opłacalności - ranking wg WSK</div>
     <div class="box-body"><canvas id="bar-chart" height="220"></canvas></div>
   </div>
 
   <div class="box">
-    <div class="box-head">&raquo; Wykres op&#322;acalno&#347;ci - cena vs &#347;redni smak</div>
+    <div class="box-head">&raquo; Wykres opłacalności - cena vs średni smak</div>
     <div class="box-body">
       <canvas id="scatter-chart" height="320"></canvas>
       <div class="legend">
         <span><span class="dot"></span>rozmiar kropki = moc</span>
         <span><span class="dot" style="background:#B02E0C;"></span>kolor = poziom kaca (jaskrawiej = gorzej)</span>
       </div>
-      <p class="chart-note">D&oacute;&#322; po prawej to strefa okazji: tanio i smacznie. G&oacute;ra po lewej - omijajcie szerokim &#322;ukiem.</p>
+      <p class="chart-note">Dół po prawej to strefa okazji: tanio i smacznie. Góra po lewej - omijajcie szerokim łukiem.</p>
     </div>
   </div>
 
-  <p class="footer">Powered by wsp&oacute;lny wsp&oacute;&#322;czynnik &middot; strona od&#347;wie&#380;a si&#281; automatycznie co 60 s</p>
+  <p class="footer">Powered by wspólny współczynnik &middot; strona odświeża się automatycznie co 20 s</p>
 </div>
 
 <script>
 // --- KONFIGURACJA BAZY DANYCH ---
-// Wklej tu adres swojej darmowej bazy Firebase Realtime Database
-// (wyglada np. tak: https://ranking-alkoholi-default-rtdb.europe-west1.firebasedatabase.app)
-const FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
+const RAW_FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
+const FIREBASE_URL = RAW_FIREBASE_URL.replace(/\/+$/, ''); // usuwa ewentualne ukośniki z końca URL
 // --- KONIEC KONFIGURACJI ---
 
 let items = [];
@@ -349,24 +348,41 @@ async function loadData(){
       fetch(`${FIREBASE_URL}/items.json`),
       fetch(`${FIREBASE_URL}/banned.json`),
     ]);
-    if(!itemsRes.ok || !bannedRes.ok) throw new Error('blad odpowiedzi bazy');
+    if(!itemsRes.ok || !bannedRes.ok) throw new Error('Błąd odpowiedzi bazy danych');
+    
     const itemsData = await itemsRes.json();
     const bannedData = await bannedRes.json();
-    if(itemsData !== null && !Array.isArray(itemsData)){
-      throw new Error('Nieprawidłowy format danych items');
+
+    // Bezpieczne parsowanie danych bez względu na to, czy Firebase zwraca Array, Object czy null
+    if (itemsData === null) {
+      items = [];
+    } else if (Array.isArray(itemsData)) {
+      items = itemsData.filter(Boolean);
+    } else if (typeof itemsData === 'object') {
+      items = Object.values(itemsData).filter(Boolean);
+    } else {
+      items = [];
     }
-    if(bannedData !== null && !Array.isArray(bannedData)){
-      throw new Error('Nieprawidłowy format danych banned');
+
+    if (bannedData === null) {
+      bannedNicks = [];
+    } else if (Array.isArray(bannedData)) {
+      bannedNicks = bannedData.filter(Boolean);
+    } else if (typeof bannedData === 'object') {
+      bannedNicks = Object.values(bannedData).filter(Boolean);
+    } else {
+      bannedNicks = [];
     }
-    items = Array.isArray(itemsData) ? itemsData : [];
-    bannedNicks = Array.isArray(bannedData) ? bannedData : [];
+
     els.err.style.display = 'none';
   }catch(e){
-    els.err.textContent = 'Nie mo\u017cna po\u0142\u0105czy\u0107 si\u0119 z baz\u0105 danych forum. Sprawd\u017a adres FIREBASE_URL w kodzie strony.';
+    console.error(e);
+    els.err.textContent = 'Nie można połączyć się z bazą danych forum. Sprawdź adres FIREBASE_URL oraz reguły dostępu (Rules) w Firebase.';
     els.err.style.display = 'block';
   }
   renderAll();
 }
+
 async function saveItems(){
   try{
     const res = await fetch(`${FIREBASE_URL}/items.json`, {
@@ -374,12 +390,13 @@ async function saveItems(){
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(items)
     });
-    if(!res.ok) throw new Error('blad zapisu');
+    if(!res.ok) throw new Error('Błąd zapisu');
   }catch(e){
-    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; posta na serwerze forum. Spr&oacute;bujcie ponownie.';
+    els.err.textContent = 'Nie udało się zapisać posta na serwerze forum. Spróbuj ponownie.';
     els.err.style.display = 'block';
   }
 }
+
 async function saveBanned(){
   try{
     const res = await fetch(`${FIREBASE_URL}/banned.json`, {
@@ -387,9 +404,9 @@ async function saveBanned(){
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(bannedNicks)
     });
-    if(!res.ok) throw new Error('blad zapisu');
+    if(!res.ok) throw new Error('Błąd zapisu');
   }catch(e){
-    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; listy bana. Spr&oacute;bujcie ponownie.';
+    els.err.textContent = 'Nie udało się zapisać listy zbanowanych. Spróbuj ponownie.';
     els.err.style.display = 'block';
   }
 }
@@ -399,6 +416,7 @@ function escapeHtml(s){
   d.textContent = s == null ? '' : s;
   return d.innerHTML;
 }
+
 function formatDate(ts){
   if(!ts) return '';
   const d = new Date(ts);
@@ -421,6 +439,7 @@ function fillSelect(select, values, allLabel){
     values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
   if(values.includes(current)) select.value = current;
 }
+
 function populateFilterOptions(){
   const rodzaje = Array.from(new Set(items.map(i=>i.rodzaj).filter(Boolean))).sort();
   const profile = Array.from(new Set(items.map(i=>(i.profil||'').trim()).filter(Boolean))).sort();
@@ -437,6 +456,7 @@ function renderAdminPanel(){
         ${escapeHtml(n)} <button class="btn btn-small unban-btn" data-nick="${escapeHtml(n)}" style="padding:1px 5px;">Odbanuj</button>
       </span>`).join('')
     : '<span style="font-size:10px; color:#8AA0BC;">Nikt nie jest zbanowany.</span>';
+  
   els.bannedList.querySelectorAll('.unban-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       bannedNicks = bannedNicks.filter(n => n !== btn.dataset.nick);
@@ -456,13 +476,13 @@ function renderAll(){
 
 function renderList(){
   const filtered = getFilteredItems();
-  els.count.textContent = `[${filtered.length}${filtered.length !== items.length ? ' z '+items.length : ''} post\u00f3w]`;
+  els.count.textContent = `[${filtered.length}${filtered.length !== items.length ? ' z '+items.length : ''} postów]`;
   if(items.length === 0){
-    els.list.innerHTML = '<tr><td class="empty">W&#261;tek jest pusty. Do&#322;&oacute;&#380;cie pierwszy post powy&#380;ej.</td></tr>';
+    els.list.innerHTML = '<tr><td class="empty">Wątek jest pusty. Dołóżcie pierwszy post powyżej.</td></tr>';
     return;
   }
   if(filtered.length === 0){
-    els.list.innerHTML = '<tr><td class="empty">&#379;aden trunek nie pasuje do wybranych filtr&oacute;w.</td></tr>';
+    els.list.innerHTML = '<tr><td class="empty">Żaden trunek nie pasuje do wybranych filtrów.</td></tr>';
     return;
   }
   const scored = filtered.map(it=>({ it, sc: score(it) })).sort((a,b)=>b.sc-a.sc);
@@ -471,19 +491,19 @@ function renderList(){
     const smakAvg = avg(it.smakVotes), kacAvg = avg(it.kacVotes);
     const smakN = voteCount(it.smakVotes), kacN = voteCount(it.kacVotes);
     const photoHtml = it.photoUrl
-      ? `<img src="${escapeHtml(it.photoUrl)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="avatar-fallback" style="display:none; height:80px; align-items:center;">brak<br>zdj&#281;cia</div>`
-      : `<div class="avatar-fallback" style="height:80px; display:flex; align-items:center; justify-content:center;">brak<br>zdj&#281;cia</div>`;
+      ? `<img src="${escapeHtml(it.photoUrl)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="avatar-fallback" style="display:none; height:80px; align-items:center;">brak<br>zdjęcia</div>`
+      : `<div class="avatar-fallback" style="height:80px; display:flex; align-items:center; justify-content:center;">brak<br>zdjęcia</div>`;
     const comments = it.comments || [];
     const commentsHtml = comments.length
       ? comments.map((c,cidx) => `<div class="comment">
-          <span class="c-head">${escapeHtml(c.nick)}<span class="c-date">${formatDate(c.ts)}</span>${admin ? ` <button class="btn btn-small del-comment-btn" data-id="${it.id}" data-idx="${cidx}" style="margin-left:6px; padding:1px 5px;">Usu&#324;</button>` : ''}</span>
+          <span class="c-head">${escapeHtml(c.nick)}<span class="c-date">${formatDate(c.ts)}</span>${admin ? ` <button class="btn btn-small del-comment-btn" data-id="${it.id}" data-idx="${cidx}" style="margin-left:6px; padding:1px 5px;">Usuń</button>` : ''}</span>
           <div class="c-text">${escapeHtml(c.text)}</div>
         </div>`).join('')
-      : `<div class="no-comments">Brak komentarzy \u2014 b&#261;d&#378; pierwszy.</div>`;
+      : `<div class="no-comments">Brak komentarzy &mdash; bądź pierwszy.</div>`;
     const adminButtons = admin
       ? `<span style="display:inline-flex; gap:4px;">
           <button class="btn btn-small edit-btn" data-id="${it.id}">Edytuj</button>
-          <button class="btn btn-small del-item-btn" data-id="${it.id}">Usu&#324;</button>
+          <button class="btn btn-small del-item-btn" data-id="${it.id}">Usuń</button>
         </span>`
       : '';
     const editForm = admin ? `
@@ -494,19 +514,19 @@ function renderList(){
             <td class="lbl">Rodzaj</td>
             <td>
               <select class="edit-rodzaj">
-                ${['w\u00f3dka','piwo','wino','rum','whisky','gin','likier','cydr','brandy/koniak','inne'].map(r=>`<option value="${r}" ${it.rodzaj===r?'selected':''}>${r}</option>`).join('')}
+                ${['wódka','piwo','wino','rum','whisky','gin','likier','cydr','brandy/koniak','inne'].map(r=>`<option value="${r}" ${it.rodzaj===r?'selected':''}>${r}</option>`).join('')}
               </select>
             </td>
           </tr>
           <tr>
-            <td class="lbl">Cena (z&#322;)</td><td><input type="number" class="edit-cena" value="${it.cena}"></td>
+            <td class="lbl">Cena (zł)</td><td><input type="number" class="edit-cena" value="${it.cena}"></td>
             <td class="lbl">Moc (%)</td><td><input type="number" class="edit-moc" value="${it.moc}"></td>
           </tr>
           <tr>
             <td class="lbl">Profil smaku</td><td colspan="3"><input type="text" class="edit-profil" value="${escapeHtml(it.profil||'')}"></td>
           </tr>
           <tr>
-            <td class="lbl">Zdj&#281;cie (URL)</td><td colspan="3"><input type="text" class="edit-photo" value="${escapeHtml(it.photoUrl||'')}"></td>
+            <td class="lbl">Zdjęcie (URL)</td><td colspan="3"><input type="text" class="edit-photo" value="${escapeHtml(it.photoUrl||'')}"></td>
           </tr>
         </table>
         <button class="btn btn-small save-edit-btn" data-id="${it.id}">Zapisz zmiany</button>
@@ -527,18 +547,18 @@ function renderList(){
           </span>
         </div>
         <div class="meta">
-          <span class="stat-mini">Cena: <b>${it.cena} z&#322;</b></span>
+          <span class="stat-mini">Cena: <b>${it.cena} zł</b></span>
           <span class="stat-mini">Moc: <b>${it.moc}%</b></span>
-          <span class="stat-mini">&#346;r. smak: <b>${smakAvg.toFixed(0)}/100</b> (${smakN} g&#322;.)</span>
-          <span class="stat-mini">&#346;r. kac: <b>${kacAvg.toFixed(1)}/5</b> (${kacN} g&#322;.)</span>
+          <span class="stat-mini">Śr. smak: <b>${smakAvg.toFixed(0)}/100</b> (${smakN} gł.)</span>
+          <span class="stat-mini">Śr. kac: <b>${kacAvg.toFixed(1)}/5</b> (${kacN} gł.)</span>
         </div>
         ${it.profil ? `<div class="quote">Profil smaku: ${escapeHtml(it.profil)}</div>` : ''}
         ${editForm}
         <div class="vote-box">
-          <span><b>Zag&#322;osuj:</b></span>
+          <span><b>Zagłosuj:</b></span>
           <span class="fld">smak <input type="number" min="1" max="100" step="1" class="vote-smak" data-id="${it.id}" placeholder="1-100"></span>
           <span class="fld">kac <input type="number" min="1" max="5" step="1" class="vote-kac" data-id="${it.id}" placeholder="1-5"></span>
-          <button class="btn btn-small vote-btn" data-id="${it.id}">Wy&#347;lij g&#322;os</button>
+          <button class="btn btn-small vote-btn" data-id="${it.id}">Wyślij głos</button>
         </div>
         <div class="comments">
           ${commentsHtml}
@@ -560,18 +580,18 @@ function renderList(){
       const kacVal = parseFloat(row.querySelector('.vote-kac').value);
       els.err.style.display = 'none';
       if(!nick){
-        els.err.textContent = 'Wpisz najpierw sw&oacute;j nick na g&oacute;rze strony, &#380;eby zag&#322;osowa&#263;.';
+        els.err.textContent = 'Wpisz najpierw swój nick na górze strony, żeby zagłosować.';
         els.err.style.display = 'block';
         els.globalNick.focus();
         return;
       }
       if(isBanned(nick) && !isAdmin()){
-        els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
+        els.err.textContent = 'Ten nick został zbanowany przez administratora forum.';
         els.err.style.display = 'block';
         return;
       }
       if(isNaN(smakVal) && isNaN(kacVal)){
-        els.err.textContent = 'Podaj ocen&#281; smaku i/lub kaca, zanim wy&#347;lesz g&#322;os.';
+        els.err.textContent = 'Podaj ocenę smaku i/lub kaca, zanim wyślesz głos.';
         els.err.style.display = 'block';
         return;
       }
@@ -599,18 +619,18 @@ function renderList(){
       const text = textarea.value.trim();
       els.err.style.display = 'none';
       if(!nick){
-        els.err.textContent = 'Wpisz najpierw sw&oacute;j nick na g&oacute;rze strony, &#380;eby doda&#263; komentarz.';
+        els.err.textContent = 'Wpisz najpierw swój nick na górze strony, żeby dodać komentarz.';
         els.err.style.display = 'block';
         els.globalNick.focus();
         return;
       }
       if(isBanned(nick) && !isAdmin()){
-        els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
+        els.err.textContent = 'Ten nick został zbanowany przez administratora forum.';
         els.err.style.display = 'block';
         return;
       }
       if(!text){
-        els.err.textContent = 'Wpisz tre&#347;&#263; komentarza, zanim go wy&#347;lesz.';
+        els.err.textContent = 'Wpisz treść komentarza, zanim go wyślesz.';
         els.err.style.display = 'block';
         return;
       }
@@ -630,12 +650,14 @@ function renderList(){
       if(form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
     });
   });
+
   els.list.querySelectorAll('.cancel-edit-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const form = els.list.querySelector(`.edit-form[data-id="${btn.dataset.id}"]`);
       if(form) form.style.display = 'none';
     });
   });
+
   els.list.querySelectorAll('.save-edit-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const id = btn.dataset.id;
@@ -649,7 +671,7 @@ function renderList(){
       const profil = form.querySelector('.edit-profil').value.trim();
       const photoUrl = form.querySelector('.edit-photo').value.trim();
       if(!name || isNaN(cena) || cena<=0 || isNaN(moc) || moc<=0){
-        els.err.textContent = 'Popraw dane w formularzu edycji \u2014 nazwa, cena i moc musz&#261; by&#263; poprawne.';
+        els.err.textContent = 'Popraw dane w formularzu edycji - nazwa, cena i moc muszą być poprawne.';
         els.err.style.display = 'block';
         return;
       }
@@ -658,17 +680,19 @@ function renderList(){
       renderAll();
     });
   });
+
   els.list.querySelectorAll('.del-item-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      if(!confirm('Na pewno usun&#261;&#263; ten trunek z rankingu?')) return;
+      if(!confirm('Na pewno usunąć ten trunek z rankingu?')) return;
       items = items.filter(x => x.id !== btn.dataset.id);
       await saveItems();
       renderAll();
     });
   });
+
   els.list.querySelectorAll('.del-comment-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      if(!confirm('Na pewno usun&#261;&#263; ten komentarz?')) return;
+      if(!confirm('Na pewno usunąć ten komentarz?')) return;
       const target = items.find(x=>x.id === btn.dataset.id);
       if(!target || !target.comments) return;
       target.comments.splice(parseInt(btn.dataset.idx), 1);
@@ -689,6 +713,7 @@ function setupCanvas(canvas){
   ctx.scale(dpr, dpr);
   return { ctx, w: rect.width, h };
 }
+
 function roundRect(ctx,x,y,w,h,r){
   ctx.beginPath();
   ctx.moveTo(x+r,y);
@@ -699,7 +724,8 @@ function roundRect(ctx,x,y,w,h,r){
   ctx.closePath();
   ctx.fill();
 }
-function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'\u2026' : s; }
+
+function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
 
 function renderBarChart(){
   const canvas = document.getElementById('bar-chart');
@@ -709,7 +735,7 @@ function renderBarChart(){
   if(filtered.length === 0){
     ctx.fillStyle = '#5A7EA0';
     ctx.font = '11px Verdana';
-    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wynik\u00f3w dla filtr\u00f3w.', 8, h/2);
+    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wyników dla filtrów.', 8, h/2);
     return;
   }
   const scored = filtered.map(it=>({name:it.name, sc:score(it)})).sort((a,b)=>b.sc-a.sc).slice(0,10);
@@ -744,7 +770,7 @@ function renderScatterChart(){
   if(filtered.length === 0){
     ctx.fillStyle = '#5A7EA0';
     ctx.font = '11px Verdana';
-    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wynik\u00f3w dla filtr\u00f3w.', 8, h/2);
+    ctx.fillText(items.length === 0 ? 'Brak danych do wykresu.' : 'Brak wyników dla filtrów.', 8, h/2);
     return;
   }
   const padL = 40, padB = 30, padT = 10, padR = 15;
@@ -760,13 +786,13 @@ function renderScatterChart(){
   ctx.fillStyle = '#5A7EA0';
   ctx.font = '10px Verdana';
   ctx.fillText('0', padL-6, padT+plotH+14);
-  ctx.fillText(Math.round(maxCena)+' z\u0142', padL+plotW-30, padT+plotH+14);
+  ctx.fillText(Math.round(maxCena)+' zł', padL+plotW-30, padT+plotH+14);
   ctx.save();
   ctx.translate(10, padT+plotH/2);
   ctx.rotate(-Math.PI/2);
-  ctx.fillText('smak \u2192', 0, 0);
+  ctx.fillText('smak →', 0, 0);
   ctx.restore();
-  ctx.fillText('cena \u2192', padL+plotW/2-15, padT+plotH+14);
+  ctx.fillText('cena →', padL+plotW/2-15, padT+plotH+14);
 
   filtered.forEach(it=>{
     const smakAvg = avg(it.smakVotes), kacAvg = avg(it.kacVotes) || 1;
@@ -785,6 +811,7 @@ function renderScatterChart(){
     scatterPoints.push({x, y, r, it});
   });
 }
+
 function mixColor(c1, c2, t){
   const p1 = hexToRgb(c1), p2 = hexToRgb(c2);
   const r = Math.round(p1.r + (p2.r-p1.r)*t);
@@ -792,16 +819,18 @@ function mixColor(c1, c2, t){
   const b = Math.round(p1.b + (p2.b-p1.b)*t);
   return `rgb(${r},${g},${b})`;
 }
+
 function hexToRgb(hex){
   const v = parseInt(hex.slice(1),16);
   return { r:(v>>16)&255, g:(v>>8)&255, b:v&255 };
 }
+
 const scatterCanvas = document.getElementById('scatter-chart');
 scatterCanvas.addEventListener('mousemove', (e)=>{
   const rect = scatterCanvas.getBoundingClientRect();
   const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   const hit = scatterPoints.find(p => Math.hypot(p.x-mx, p.y-my) <= p.r+2);
-  scatterCanvas.title = hit ? `${hit.it.name} \u2014 ${hit.it.cena} z\u0142, moc ${hit.it.moc}%` : '';
+  scatterCanvas.title = hit ? `${hit.it.name} — ${hit.it.cena} zł, moc ${hit.it.moc}%` : '';
 });
 
 document.getElementById('add-btn').addEventListener('click', async ()=>{
@@ -817,7 +846,7 @@ document.getElementById('add-btn').addEventListener('click', async ()=>{
 
   if(!nick || !name || isNaN(cena) || isNaN(smak) || isNaN(kac) || isNaN(moc) ||
      cena<=0 || smak<1 || smak>100 || kac<1 || kac>5 || moc<=0 || !rodzaj){
-    els.err.textContent = 'Uzupe&#322;nij nick, nazw&#281;, rodzaj i wszystkie oceny poprawnymi warto&#347;ciami.';
+    els.err.textContent = 'Uzupełnij nick, nazwę, rodzaj i wszystkie oceny poprawnymi wartościami.';
     els.err.style.display = 'block';
     return;
   }
@@ -835,14 +864,30 @@ document.getElementById('add-btn').addEventListener('click', async ()=>{
   renderAll();
 });
 
+// Zdarzenie dla banowania
+document.getElementById('ban-btn').addEventListener('click', async () => {
+  const nickToBan = els.banNickInput.value.trim();
+  if(!nickToBan) return;
+  if(!bannedNicks.some(b => b.toLowerCase() === nickToBan.toLowerCase())){
+    bannedNicks.push(nickToBan);
+    els.banNickInput.value = '';
+    await saveBanned();
+    renderAll();
+  }
+});
+
+// Zdarzenie wpisywania nicku (od razu włącza panel admina po wpisaniu 'KochamPiwo69')
+els.globalNick.addEventListener('input', renderAdminPanel);
+
 els.filterRodzaj.addEventListener('change', renderAll);
 els.filterProfil.addEventListener('change', renderAll);
-document.getElementById('refresh-btn').addEventListener('click', loadItems);
+document.getElementById('refresh-btn').addEventListener('click', loadData);
 window.addEventListener('resize', renderAll);
-window.addEventListener('focus', loadItems);
+window.addEventListener('focus', loadData);
 
+// Pierwsze ładowanie i cykliczne odświeżanie co 20 sekund
 loadData();
-setInterval(loadItems, 20000);
+setInterval(loadData, 20000);
 </script>
 </body>
 </html>
