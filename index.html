@@ -578,7 +578,7 @@ function renderAdminPanel(){
 }
 
 function renderRankManager(){
-  const nicks = Object.keys(users).sort((a,b)=>a.localeCompare(b));
+  const nicks = Object.keys(users).filter(n => n !== ADMIN_NICK).sort((a,b)=>a.localeCompare(b));
   if(nicks.length === 0){
     els.rankList.innerHTML = '<span style="font-size:10px; color:#8AA0BC;">Nikt jeszcze nie za&#322;o&#380;y&#322; konta.</span>';
     return;
@@ -620,7 +620,7 @@ function showProfile(nick){
     `Dodanych trunk&oacute;w: <b>${authored.length}</b> &middot; Oddanych g&#322;os&oacute;w: <b>${votesCast}</b> &middot; Komentarzy: <b>${commentsCount}</b>`;
 
   const editWrap = document.getElementById('profile-edit-wrap');
-  if(currentUser === nick && nick !== ADMIN_NICK){
+  if(currentUser === nick){
     const account = ensureUserObj(nick);
     editWrap.innerHTML = `
       <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
