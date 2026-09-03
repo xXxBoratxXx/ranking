@@ -351,8 +351,8 @@
 const FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
 // Wklej tu apiKey i authDomain z konfiguracji swojego projektu Firebase
 // (Project settings -> General -> Your apps -> SDK setup and configuration)
-const FIREBASE_API_KEY = 'WKLEJ-TU-SWOJ-API-KEY';
-const FIREBASE_AUTH_DOMAIN = 'WKLEJ-TU-SWOJ-PROJECT-ID.firebaseapp.com';
+const FIREBASE_API_KEY = "AIzaSyBO-_tCDFeD8Mz5lKBVONgryxpgrQR1CCo";
+const FIREBASE_AUTH_DOMAIN = "alk-database.firebaseapp.com";
 firebase.initializeApp({
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
@@ -383,6 +383,7 @@ let items = [];
 let bannedNicks = [];
 let users = {};
 let currentUser = null;
+let currentUid = null;
 const ADMIN_NICK = 'KochamPiwo69';
 const RANKS = ['pocz\u0105tkuj\u0105cy', 'okazyjny', 'menel', 'koneser'];
 const RANK_META = {
@@ -557,6 +558,40 @@ async function saveUserRecord(nick, accountObj){
 
 const NICK_REGEX = /^[A-Za-z0-9\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u0179\u017b\u0105\u0107\u0119\u0142\u0144\u00f3\u015b\u017a\u017c_-]{1,25}$/;
 function isValidNickFormat(nick){ return NICK_REGEX.test(nick); }
+
+async function applyAuthenticatedUser(fbUser, nick){
+  currentUser = nick;
+  currentUid = fbUser.uid;
+  try{
+    const res = await authedFetch(`/users/${encodeURIComponent(nick)}.json`);
+    if(res.ok){
+      const data = await res.json();
+      if(data) users[nick] = data;
+      else ensureUserObj(nick);
+    }
+  }catch(e){ ensureUserObj(nick); }
+  updateLoginUI();
+  renderAll();
+}
+
+let authReady = false;
+auth.onAuthStateChanged((fbUser)=>{
+  if(!authReady) return; // czekamy, a\u017c za\u0142aduje si\u0119 lista bana przed przywr\u00f3ceniem sesji
+  if(fbUser && !currentUser){
+    const nick = fbUser.displayName || '';
+    if(!nick) return;
+    if(isBanned(nick)){
+      auth.signOut();
+      return;
+    }
+    applyAuthenticatedUser(fbUser, nick);
+  }else if(!fbUser && currentUser){
+    currentUser = null;
+    currentUid = null;
+    updateLoginUI();
+    renderAll();
+  }
+});
 
 function escapeHtml(s){
   const d = document.createElement('div');
@@ -964,22 +999,17 @@ els.loginSubmitBtn.addEventListener('click', async ()=>{
     els.err.style.display = 'block';
     return;
   }
-  if(!Object.prototype.hasOwnProperty.call(users, nick)){
+  els.loginSubmitBtn.disabled = true;
+  try{
+    const cred = await auth.signInWithEmailAndPassword(nickToEmail(nick), pass);
+    await applyAuthenticatedUser(cred.user, nick);
+    els.loginNick.value = '';
+    els.loginPass.value = '';
+  }catch(e){
     els.err.textContent = 'Nieprawid&#322;owy nick lub has&#322;o.';
     els.err.style.display = 'block';
-    return;
   }
-  const account = ensureUserObj(nick);
-  if(account.password !== pass){
-    els.err.textContent = 'Nieprawid&#322;owy nick lub has&#322;o.';
-    els.err.style.display = 'block';
-    return;
-  }
-  currentUser = nick;
-  els.loginNick.value = '';
-  els.loginPass.value = '';
-  updateLoginUI();
-  renderAll();
+  els.loginSubmitBtn.disabled = false;
 });
 
 els.registerSubmitBtn.addEventListener('click', async ()=>{
@@ -996,6 +1026,11 @@ els.registerSubmitBtn.addEventListener('click', async ()=>{
     els.err.style.display = 'block';
     return;
   }
+  if(pass.length < 6){
+    els.err.textContent = 'Has&#322;o musi mie&#263; co najmniej 6 znak&oacute;w (tak wymaga Firebase Authentication).';
+    els.err.style.display = 'block';
+    return;
+  }
   if(isBanned(nick)){
     els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum.';
     els.err.style.display = 'block';
@@ -1007,29 +1042,47 @@ els.registerSubmitBtn.addEventListener('click', async ()=>{
     return;
   }
   els.registerSubmitBtn.disabled = true;
-  const takenOnServer = await isNickTakenOnServer(nick);
-  if(takenOnServer){
-    els.err.textContent = 'Ten nick jest ju&#380; zaj&#281;ty. Zaloguj si&#281; zamiast zak&#322;ada&#263; nowe konto.';
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(nickToEmail(nick), pass);
+    await cred.user.updateProfile({ displayName: nick });
+    const account = { nick, uid: cred.user.uid, avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
+    const token = await cred.user.getIdToken();
+    const res = await fetch(`${FIREBASE_URL}/users/${encodeURIComponent(nick)}.json?auth=${token}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(account)
+    });
+    if(!res.ok) throw { code: 'db-write-failed' };
+    users[nick] = account;
+    await applyAuthenticatedUser(cred.user, nick);
+    els.registerNick.value = '';
+    els.registerPass.value = '';
+  }catch(e){
+    if(e && e.code === 'auth/email-already-in-use'){
+      els.err.textContent = 'Ten nick jest ju&#380; zaj&#281;ty. Zaloguj si&#281; zamiast zak&#322;ada&#263; nowe konto.';
+    }else if(e && e.code === 'auth/weak-password'){
+      els.err.textContent = 'Has&#322;o jest za s&#322;abe (minimum 6 znak&oacute;w).';
+    }else{
+      els.err.textContent = 'Nie uda&#322;o si&#281; za&#322;o&#380;y&#263; konta. Spr&oacute;buj ponownie.';
+    }
     els.err.style.display = 'block';
-    els.registerSubmitBtn.disabled = false;
-    return;
   }
-  const account = { password: pass, avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
-  const ok = await saveSingleUser(nick, account);
   els.registerSubmitBtn.disabled = false;
-  if(!ok) return;
-  users[nick] = account;
-  currentUser = nick;
-  els.registerNick.value = '';
-  els.registerPass.value = '';
-  updateLoginUI();
-  renderAll();
 });
 
-els.logoutBtn.addEventListener('click', ()=>{
-  currentUser = null;
-  updateLoginUI();
-  renderAll();
+els.logoutBtn.addEventListener('click', async ()=>{
+  await auth.signOut();
+});
+
+document.getElementById('ban-btn').addEventListener('click', async ()=>{
+  const nick = els.banNickInput.value.trim();
+  if(!nick) return;
+  if(!bannedNicks.some(n => n.toLowerCase() === nick.toLowerCase())){
+    bannedNicks.push(nick);
+    await saveBanned();
+  }
+  els.banNickInput.value = '';
+  renderAdminPanel();
 });
 
 document.getElementById('add-btn').addEventListener('click', async ()=>{
@@ -1078,7 +1131,17 @@ window.addEventListener('resize', renderAll);
 window.addEventListener('focus', loadData);
 
 updateLoginUI();
-loadData();
+loadData().then(()=>{
+  authReady = true;
+  const fbUser = auth.currentUser;
+  if(fbUser && !currentUser){
+    const nick = fbUser.displayName || '';
+    if(nick){
+      if(isBanned(nick)) auth.signOut();
+      else applyAuthenticatedUser(fbUser, nick);
+    }
+  }
+});
 setInterval(loadData, 20000);
 </script>
 </body>
