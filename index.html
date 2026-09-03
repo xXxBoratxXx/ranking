@@ -204,7 +204,7 @@
       <div class="pw-warning">Uwaga: ta baza danych nie ma has&#322;a administracyjnego &mdash; ka&#380;dy, kto zna jej adres, mo&#380;e odczyta&#263; zapisane tu has&#322;a wprost z bazy. NIE u&#380;ywaj tutaj prawdziwego has&#322;a, kt&oacute;rego u&#380;ywasz gdzie indziej!</div>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:6px;">
         <span><b>Nick:</b></span>
-        <input type="text" id="login-nick" placeholder="np. Piwosz_69" maxlength="24">
+        <input type="text" id="login-nick" placeholder="np. Piwosz_69" maxlength="25">
         <span><b>Has&#322;o:</b></span>
         <input type="password" id="login-pass" placeholder="dowolne, byle nie prawdziwe" maxlength="40">
         <button class="btn btn-small" id="login-submit-btn">Zaloguj</button>
@@ -215,7 +215,7 @@
       <div class="pw-warning">Uwaga: ta baza danych nie ma has&#322;a administracyjnego &mdash; ka&#380;dy, kto zna jej adres, mo&#380;e odczyta&#263; zapisane tu has&#322;a wprost z bazy. NIE u&#380;ywaj tutaj prawdziwego has&#322;a, kt&oacute;rego u&#380;ywasz gdzie indziej!</div>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:6px;">
         <span><b>Nick:</b></span>
-        <input type="text" id="register-nick" placeholder="np. Piwosz_69" maxlength="24">
+        <input type="text" id="register-nick" placeholder="np. Piwosz_69" maxlength="25">
         <span><b>Has&#322;o:</b></span>
         <input type="password" id="register-pass" placeholder="dowolne, byle nie prawdziwe" maxlength="40">
         <button class="btn btn-small" id="register-submit-btn">Za&#322;&oacute;&#380; konto</button>
@@ -342,19 +342,48 @@
   <p class="footer">Powered by wsp&oacute;lny wsp&oacute;&#322;czynnik &middot; strona od&#347;wie&#380;a si&#281; automatycznie co 20 s</p>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
 <script>
-// --- KONFIGURACJA BAZY DANYCH ---
+// --- KONFIGURACJA BAZY DANYCH I LOGOWANIA ---
 // Wklej tu adres swojej darmowej bazy Firebase Realtime Database
 // (wyglada np. tak: https://ranking-alkoholi-default-rtdb.europe-west1.firebasedatabase.app)
 const FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
+// Wklej tu apiKey i authDomain z konfiguracji swojego projektu Firebase
+// (Project settings -> General -> Your apps -> SDK setup and configuration)
+const FIREBASE_API_KEY = 'WKLEJ-TU-SWOJ-API-KEY';
+const FIREBASE_AUTH_DOMAIN = 'WKLEJ-TU-SWOJ-PROJECT-ID.firebaseapp.com';
+firebase.initializeApp({
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  databaseURL: FIREBASE_URL,
+});
+const auth = firebase.auth();
 // --- KONIEC KONFIGURACJI ---
+
+function nickToEmail(nick){
+  const bytes = new TextEncoder().encode(nick.toLowerCase());
+  let hex = '';
+  bytes.forEach(b => { hex += b.toString(16).padStart(2,'0'); });
+  return `u${hex}@ranking.local`;
+}
+async function authedFetch(path, options){
+  let url = `${FIREBASE_URL}${path}`;
+  const user = auth.currentUser;
+  if(user){
+    try{
+      const token = await user.getIdToken();
+      url += (path.includes('?') ? '&' : '?') + `auth=${token}`;
+    }catch(e){ /* brak tokenu - zapis i tak zostanie odrzucony przez regu&#322;y bazy */ }
+  }
+  return fetch(url, options);
+}
 
 let items = [];
 let bannedNicks = [];
 let users = {};
 let currentUser = null;
 const ADMIN_NICK = 'KochamPiwo69';
-const ADMIN_PASSWORD = 'wielkibebzon2137';
 const RANKS = ['pocz\u0105tkuj\u0105cy', 'okazyjny', 'menel', 'koneser'];
 const RANK_META = {
   'pocz\u0105tkuj\u0105cy': { label: 'pocz\u0105tkuj\u0105cy', color: '#8AA0BC' },
@@ -408,13 +437,13 @@ function isBanned(nick){ return bannedNicks.some(b => b.toLowerCase() === nick.t
 
 function ensureUserObj(nick){
   const existing = users[nick];
-  if(typeof existing === 'string'){
-    users[nick] = { password: existing, avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
-  }else if(!existing || typeof existing !== 'object'){
-    users[nick] = { password: '', avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
+  if(!existing || typeof existing !== 'object'){
+    users[nick] = { nick, uid: '', avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
   }else{
     if(existing.avatarUrl === undefined) existing.avatarUrl = '';
     if(existing.rank === undefined) existing.rank = 'pocz\u0105tkuj\u0105cy';
+    if(existing.uid === undefined) existing.uid = '';
+    if(existing.nick === undefined) existing.nick = nick;
   }
   return users[nick];
 }
@@ -486,7 +515,7 @@ async function loadData(){
 }
 async function saveItems(){
   try{
-    const res = await fetch(`${FIREBASE_URL}/items.json`, {
+    const res = await authedFetch(`/items.json`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(items)
@@ -499,7 +528,7 @@ async function saveItems(){
 }
 async function saveBanned(){
   try{
-    const res = await fetch(`${FIREBASE_URL}/banned.json`, {
+    const res = await authedFetch(`/banned.json`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(bannedNicks)
@@ -510,19 +539,24 @@ async function saveBanned(){
     els.err.style.display = 'block';
   }
 }
-async function saveUsers(){
+async function saveUserRecord(nick, accountObj){
   try{
-    const res = await fetch(`${FIREBASE_URL}/users.json`, {
+    const res = await authedFetch(`/users/${encodeURIComponent(nick)}.json`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(users)
+      body: JSON.stringify(accountObj)
     });
     if(!res.ok) throw new Error('blad zapisu');
+    return true;
   }catch(e){
-    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; konta na serwerze forum. Spr&oacute;bujcie ponownie.';
+    els.err.textContent = 'Nie uda&#322;o si&#281; zapisa&#263; profilu na serwerze forum. Spr&oacute;bujcie ponownie.';
     els.err.style.display = 'block';
+    return false;
   }
 }
+
+const NICK_REGEX = /^[A-Za-z0-9\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u0179\u017b\u0105\u0107\u0119\u0142\u0144\u00f3\u015b\u017a\u017c_-]{1,25}$/;
+function isValidNickFormat(nick){ return NICK_REGEX.test(nick); }
 
 function escapeHtml(s){
   const d = document.createElement('div');
@@ -599,7 +633,7 @@ function renderRankManager(){
       const sel = els.rankList.querySelector(`.rank-select[data-nick="${nick}"]`);
       const account = ensureUserObj(nick);
       account.rank = sel.value;
-      await saveUsers();
+      await saveUserRecord(nick, account);
       renderRankManager();
       renderList();
     });
@@ -631,7 +665,7 @@ function showProfile(nick){
       const url = document.getElementById('avatar-url-input').value.trim();
       const acc = ensureUserObj(nick);
       acc.avatarUrl = url;
-      await saveUsers();
+      await saveUserRecord(nick, acc);
       showProfile(nick);
       renderList();
     });
@@ -925,19 +959,6 @@ els.loginSubmitBtn.addEventListener('click', async ()=>{
     els.err.style.display = 'block';
     return;
   }
-  if(nick === ADMIN_NICK){
-    if(pass !== ADMIN_PASSWORD){
-      els.err.textContent = 'Nieprawid&#322;owy nick lub has&#322;o.';
-      els.err.style.display = 'block';
-      return;
-    }
-    currentUser = ADMIN_NICK;
-    els.loginNick.value = '';
-    els.loginPass.value = '';
-    updateLoginUI();
-    renderAll();
-    return;
-  }
   if(isBanned(nick)){
     els.err.textContent = 'Ten nick zosta&#322; zbanowany przez administratora forum i nie mo&#380;e si&#281; zalogowa&#263;.';
     els.err.style.display = 'block';
@@ -970,8 +991,8 @@ els.registerSubmitBtn.addEventListener('click', async ()=>{
     els.err.style.display = 'block';
     return;
   }
-  if(nick === ADMIN_NICK){
-    els.err.textContent = 'Ten nick jest zarezerwowany.';
+  if(!isValidNickFormat(nick)){
+    els.err.textContent = 'Nick mo&#380;e mie&#263; maksymalnie 25 znak&oacute;w i tylko litery (w tym polskie), cyfry, my&#347;lnik lub podkre&#347;lenie &#8212; bez spacji i innych symboli.';
     els.err.style.display = 'block';
     return;
   }
@@ -985,8 +1006,19 @@ els.registerSubmitBtn.addEventListener('click', async ()=>{
     els.err.style.display = 'block';
     return;
   }
-  users[nick] = { password: pass, avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
-  await saveUsers();
+  els.registerSubmitBtn.disabled = true;
+  const takenOnServer = await isNickTakenOnServer(nick);
+  if(takenOnServer){
+    els.err.textContent = 'Ten nick jest ju&#380; zaj&#281;ty. Zaloguj si&#281; zamiast zak&#322;ada&#263; nowe konto.';
+    els.err.style.display = 'block';
+    els.registerSubmitBtn.disabled = false;
+    return;
+  }
+  const account = { password: pass, avatarUrl: '', rank: 'pocz\u0105tkuj\u0105cy' };
+  const ok = await saveSingleUser(nick, account);
+  els.registerSubmitBtn.disabled = false;
+  if(!ok) return;
+  users[nick] = account;
   currentUser = nick;
   els.registerNick.value = '';
   els.registerPass.value = '';
