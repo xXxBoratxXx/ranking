@@ -351,8 +351,8 @@
 const FIREBASE_URL = 'https://alk-database-default-rtdb.europe-west1.firebasedatabase.app';
 // Wklej tu apiKey i authDomain z konfiguracji swojego projektu Firebase
 // (Project settings -> General -> Your apps -> SDK setup and configuration)
-const FIREBASE_API_KEY = "AIzaSyBO-_tCDFeD8Mz5lKBVONgryxpgrQR1CCo";
-const FIREBASE_AUTH_DOMAIN = "alk-database.firebaseapp.com";
+const FIREBASE_API_KEY = 'WKLEJ-TU-SWOJ-API-KEY';
+const FIREBASE_AUTH_DOMAIN = 'WKLEJ-TU-SWOJ-PROJECT-ID.firebaseapp.com';
 firebase.initializeApp({
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
@@ -710,14 +710,14 @@ function showProfile(nick){
 
   const voted = items.filter(it => it.smakVotes && Object.prototype.hasOwnProperty.call(it.smakVotes, nick));
   const combined = Array.from(new Map([...authored, ...voted].map(it => [it.id, it])).values());
-  const top = combined.slice().sort((a,b)=>score(b)-score(a)).slice(0,5);
+  const top = combined.slice().sort((a,b)=> (b.smakVotes[nick]||0) - (a.smakVotes[nick]||0)).slice(0,5);
   const itemsList = document.getElementById('profile-items');
   itemsList.innerHTML = top.length
     ? top.map((it,i)=>{
         const isAuthor = it.nick === nick;
         return `<div style="padding:6px 0; border-bottom:1px solid #D3E1F2; font-size:11px;">
           <b>#${i+1}</b> ${escapeHtml(it.name)} <span style="color:#5A7EA0;">[${escapeHtml(it.rodzaj||'')}]</span>
-          &middot; WSK: <b style="color:#B02E0C;">${score(it).toFixed(1)}</b>
+          &middot; Jego/jej ocena smaku: <b style="color:#B02E0C;">${it.smakVotes[nick]}/100</b>
           ${isAuthor ? '' : ' <span style="color:#8AA0BC;">(g&#322;osowa&#322;/a na t&#281; pozycj&#281;)</span>'}
         </div>`;
       }).join('')
@@ -1036,7 +1036,7 @@ els.registerSubmitBtn.addEventListener('click', async ()=>{
     els.err.style.display = 'block';
     return;
   }
-  if(Object.prototype.hasOwnProperty.call(users, nick)){
+  if(Object.prototype.hasOwnProperty.call(users, nick) && users[nick] && users[nick].uid){
     els.err.textContent = 'Ten nick jest ju&#380; zaj&#281;ty. Zaloguj si&#281; zamiast zak&#322;ada&#263; nowe konto.';
     els.err.style.display = 'block';
     return;
